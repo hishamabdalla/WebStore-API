@@ -19,6 +19,24 @@ builder.Services.AddDbContext<StoreDbContext>(options =>
 
 var app = builder.Build();
 
+using var scope = app.Services.CreateScope();
+
+var services = scope.ServiceProvider;
+
+var context = services.GetRequiredService<StoreDbContext>();
+var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+
+try
+{
+    context.Database.Migrate();
+}
+catch (Exception ex)
+{
+    var logger= loggerFactory.CreateLogger<Program>();
+
+    logger.LogError(ex,"There are Problems during apply migration !");
+}
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
