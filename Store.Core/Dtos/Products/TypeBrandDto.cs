@@ -8,7 +8,7 @@ namespace Store.Core.Dtos.Products
 {
     public class TypeBrandDto
     {
-        public int Name { get; set; }
+        public string Name { get; set; }
         public DateTime CreateAt { get; set; }
     }
 }
