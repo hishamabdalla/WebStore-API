@@ -1,4 +1,5 @@
 ﻿using Store.Core.Entities;
+using Store.Core.Specifications;
 using System;
 using System.Collections.Generic;
 using System.Dynamic;
@@ -15,6 +16,10 @@ namespace Store.Core.Repositories.Interfaces
     /// <typeparam name="TKey">The type of the entity's unique identifier.</typeparam>
     public interface IGenericRepository<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
+
+        Task<IEnumerable<TEntity>> GetAllWithSpecAsync(ISpecifications<TEntity, TKey> spec);
+         Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity, TKey> spec);
+
         /// <summary>
         /// Retrieves all entities asynchronously.
         /// </summary>
