@@ -33,8 +33,6 @@ namespace Store.Service.Services.Products
             return mappedProduct;
         }
 
-        //public async Task<IEnumerable<ProductDto>> GetAllProductsAsync() =>
-        //  _mapper.Map<IEnumerable<ProductDto>>(await _unitOfWork.Repository<Product, int>().GetAllAsync());
 
         public async Task<ProductDto> GetProductById(int id)
         {

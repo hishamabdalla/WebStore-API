@@ -29,7 +29,7 @@ namespace Store.API
 
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddAutoMapper(m => m.AddProfile(new ProductProfile()));
+            builder.Services.AddAutoMapper(m => m.AddProfile(new ProductProfile(builder.Configuration)));
             var app = builder.Build();
 
             using var scope = app.Services.CreateScope();
@@ -57,7 +57,7 @@ namespace Store.API
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseStaticFiles();
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
