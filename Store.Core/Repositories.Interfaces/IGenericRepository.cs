@@ -17,8 +17,24 @@ namespace Store.Core.Repositories.Interfaces
     public interface IGenericRepository<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
 
+        /// <summary>
+        /// Retrieves all entities that satisfy the given specifications.
+        /// </summary>
+        /// <param name="spec">The specifications used to filter and include related data.</param>
+        /// <returns>
+        /// A task representing the operation, returning a collection of entities that match the criteria.
+        /// </returns>
         Task<IEnumerable<TEntity>> GetAllWithSpecAsync(ISpecifications<TEntity, TKey> spec);
-         Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity, TKey> spec);
+
+        /// <summary>
+        /// Retrieves a single entity that matches the given specifications.
+        /// </summary>
+        /// <param name="spec">The specifications used to filter and include related data.</param>
+        /// <returns>
+        /// A task representing the operation, returning the matching entity, or null if no match is found.
+        /// </returns>
+        Task<TEntity> GetWithSpecAsync(ISpecifications<TEntity, TKey> spec);
+
 
         /// <summary>
         /// Retrieves all entities asynchronously.
