@@ -43,6 +43,11 @@ namespace Store.Repository
             {
                 query=query.OrderByDescending(spec.OrderByDesc);
             }
+            if (spec.IsPaginationEnabled)
+            {
+                query = query.Skip(spec.Skip).Take(spec.Take);
+            }
+
             // Apply include expressions to add related entities to the query.
             // Aggregate loops through each IncludeExpression and applies it to the current query.
             query = spec.Include.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));

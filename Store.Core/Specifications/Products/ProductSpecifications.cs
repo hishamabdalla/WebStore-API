@@ -16,7 +16,7 @@ namespace Store.Core.Specifications.Products
 
         }
 
-        public ProductSpecifications(string? sort, int? brandId, int? typeId):base(
+        public ProductSpecifications(string? sort, int? brandId, int? typeId,int pageSize, int pageIndex) :base(
             
             p => 
             (!brandId.HasValue || p.BrandId==brandId)
@@ -47,6 +47,11 @@ namespace Store.Core.Specifications.Products
             }
              
             ApplyInclude();
+
+            //300
+            //PageSize=50
+            //PageIndex=3
+            ApplyPagination((pageSize) * (pageIndex - 1), pageSize);
         }
 
         private void ApplyInclude()

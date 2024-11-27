@@ -34,6 +34,11 @@ namespace Store.Core.Specifications
         Expression<Func<TEntity,object>> OrderBy { get; set; }
         Expression<Func<TEntity,object>> OrderByDesc { get; set; }
 
+        int Skip { get;set; }
+        int Take { get; set; }
+
+        public bool IsPaginationEnabled {  get; set; }
+
     }
 
 }
