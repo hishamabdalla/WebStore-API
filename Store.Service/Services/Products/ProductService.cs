@@ -7,7 +7,7 @@ using Store.Core.Specifications;
 using Store.Core.Specifications.Products;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Linq; 
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,11 +24,11 @@ namespace Store.Service.Services.Products
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync()
+        public async Task<IEnumerable<ProductDto>> GetAllProductsAsync(string? sort)
         {
-            var spec = new ProductSpecifications();
+            var spec = new ProductSpecifications(sort);
 
-            var products = await _unitOfWork.Repository<Product, int>().GetAllAsync();
+            var products = await _unitOfWork.Repository<Product, int>().GetAllWithSpecAsync(spec);
             var mappedProduct = _mapper.Map<IEnumerable<ProductDto>>(products);
             return mappedProduct;
         }

@@ -11,7 +11,9 @@ namespace Store.Core.Specifications
     public class BaseSpecifications<TEntity, TKey> : ISpecifications<TEntity, TKey> where TEntity : BaseEntity<TKey>
     {
         public Expression<Func<TEntity, bool>> Criteria { get; set; } = null;
-        public List<Expression<Func<TEntity, object>>> Include { get ; set; } =new List<Expression<Func<TEntity, object>>>();
+        public List<Expression<Func<TEntity, object>>> Include { get; set; } = new List<Expression<Func<TEntity, object>>>();
+        public Expression<Func<TEntity, object>> OrderBy { get; set; }
+        public Expression<Func<TEntity, object>> OrderByDesc { get; set; }
 
         public BaseSpecifications(Expression<Func<TEntity, bool>> expression)
         {
@@ -19,7 +21,17 @@ namespace Store.Core.Specifications
         }
         public BaseSpecifications()
         {
-            
+
+
+        }
+
+        public void AddOrderBy(Expression<Func<TEntity, object>> expression)
+        {
+            OrderBy = expression;
+        }
+        public void AddOrderByDesc(Expression<Func<TEntity, object >> expression)
+        {
+            OrderByDesc = expression;
         }
     }
 }

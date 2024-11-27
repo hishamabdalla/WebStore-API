@@ -35,7 +35,14 @@ namespace Store.Repository
             {
                 query = query.Where(spec.Criteria);
             }
-
+            if(spec.OrderBy is not null)
+            {
+                query = query.OrderBy(spec.OrderBy);
+            }
+            if(spec.OrderByDesc is not null)
+            {
+                query=query.OrderByDescending(spec.OrderByDesc);
+            }
             // Apply include expressions to add related entities to the query.
             // Aggregate loops through each IncludeExpression and applies it to the current query.
             query = spec.Include.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));

@@ -30,6 +30,10 @@ namespace Store.Core.Specifications
         /// Each expression specifies a navigation property to include.
         /// </summary>
         List<Expression<Func<TEntity, object>>> Include { get; set; }
+
+        Expression<Func<TEntity,object>> OrderBy { get; set; }
+        Expression<Func<TEntity,object>> OrderByDesc { get; set; }
+
     }
 
 }
