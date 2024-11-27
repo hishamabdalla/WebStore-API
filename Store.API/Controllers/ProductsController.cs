@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Services.Interfaces;
+using Store.Core.Specifications.Products;
 
 namespace Store.API.Controllers
 {
@@ -15,9 +16,9 @@ namespace Store.API.Controllers
             _productService = productService;
         }
         [HttpGet] // Get : BaseUrl/api/Products
-        public async Task<IActionResult> GetAllProducts([FromQuery]string? sort, [FromQuery] int?brandId, [FromQuery] int? typeId, [FromQuery] int? pageSize=5, [FromQuery] int? pageIndex=1)
+        public async Task<IActionResult> GetAllProducts([FromQuery] ProductSpecParams productSpec )
         {
-            var result= await _productService.GetAllProductsAsync(sort,brandId,typeId,pageSize,pageIndex);
+            var result= await _productService.GetAllProductsAsync(productSpec);
             return Ok(result); 
         }
 

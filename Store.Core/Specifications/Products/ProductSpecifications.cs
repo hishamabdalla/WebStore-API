@@ -16,27 +16,25 @@ namespace Store.Core.Specifications.Products
 
         }
 
-        public ProductSpecifications(string? sort, int? brandId, int? typeId,int pageSize, int pageIndex) :base(
-            
-            p => 
-            (!brandId.HasValue || p.BrandId==brandId)
+        public ProductSpecifications(ProductSpecParams productSpec) : base(
+            p =>
+            (!productSpec.BrandId.HasValue || p.BrandId == productSpec.BrandId)
             &&
-            (!typeId.HasValue || p.TypeId==typeId))
-
+            (!productSpec.TypeId.HasValue || p.TypeId == productSpec.TypeId))
         {
-            if (!string.IsNullOrEmpty(sort))
+            if (!string.IsNullOrEmpty(productSpec.Sort))
             {
-                switch(sort)
+                switch (productSpec.Sort)
                 {
-                   
+
                     case "priceAsc":
-                        AddOrderBy(p=>p.Price);
+                        AddOrderBy(p => p.Price);
                         break;
                     case "priceDesc":
                         AddOrderByDesc(p => p.Price);
                         break;
                     default:
-                       AddOrderBy(p=>p.Name);
+                        AddOrderBy(p => p.Name);
                         break;
 
                 }
@@ -45,13 +43,13 @@ namespace Store.Core.Specifications.Products
             {
                 AddOrderBy(p => p.Name);
             }
-             
+
             ApplyInclude();
 
             //300
             //PageSize=50
             //PageIndex=3
-            ApplyPagination((pageSize) * (pageIndex - 1), pageSize);
+            ApplyPagination((productSpec.PageSize) * (productSpec.PageIndex - 1), productSpec.PageSize);
         }
 
         private void ApplyInclude()

@@ -1,5 +1,7 @@
 ﻿using Store.Core.Dtos.Products;
 using Store.Core.Entities;
+using Store.Core.Helper;
+using Store.Core.Specifications.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace Store.Core.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<IEnumerable<ProductDto>> GetAllProductsAsync(string? sort, int? brandId, int? typeId,int? pageSize,  int? pageIndex);
+        Task<PaginationResponse<ProductDto>> GetAllProductsAsync(ProductSpecParams productSpec);
         Task<IEnumerable<TypeBrandDto>> GetAllBrandsAsync();
         Task<IEnumerable<TypeBrandDto>> GetAllTypesAsync();
 

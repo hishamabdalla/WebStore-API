@@ -55,6 +55,8 @@ namespace Store.Core.Repositories.Interfaces
         /// <param name="entity">The entity to add.</param>
         Task AddAsync(TEntity entity);
 
+        Task<int> GetCountAsync(ISpecifications<TEntity,TKey> spec);
+
         /// <summary>
         /// Updates an existing entity.
         /// </summary>
@@ -66,6 +68,8 @@ namespace Store.Core.Repositories.Interfaces
         /// </summary>
         /// <param name="entity">The entity to remove.</param>
         void Delete(TEntity entity);
+
+
     }
 
 }
