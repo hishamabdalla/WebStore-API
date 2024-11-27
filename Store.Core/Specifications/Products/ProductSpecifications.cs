@@ -18,9 +18,11 @@ namespace Store.Core.Specifications.Products
 
         public ProductSpecifications(ProductSpecParams productSpec) : base(
             p =>
+            (string.IsNullOrEmpty(productSpec.Search) || p.Name.ToLower().Contains(productSpec.Search)
+            &&
             (!productSpec.BrandId.HasValue || p.BrandId == productSpec.BrandId)
             &&
-            (!productSpec.TypeId.HasValue || p.TypeId == productSpec.TypeId))
+            (!productSpec.TypeId.HasValue || p.TypeId == productSpec.TypeId)))
         {
             if (!string.IsNullOrEmpty(productSpec.Sort))
             {
