@@ -16,7 +16,13 @@ namespace Store.Core.Specifications.Products
 
         }
 
-        public ProductSpecifications(string? sort) 
+        public ProductSpecifications(string? sort, int? brandId, int? typeId):base(
+            
+            p => 
+            (!brandId.HasValue || p.BrandId==brandId)
+            &&
+            (!typeId.HasValue || p.TypeId==typeId))
+
         {
             if (!string.IsNullOrEmpty(sort))
             {

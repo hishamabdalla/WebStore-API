@@ -15,9 +15,9 @@ namespace Store.API.Controllers
             _productService = productService;
         }
         [HttpGet] // Get : BaseUrl/api/Products
-        public async Task<IActionResult> GetAllProducts([FromQuery]string? sort)
+        public async Task<IActionResult> GetAllProducts([FromQuery]string? sort, [FromQuery] int?brandId, [FromQuery] int? typeId)
         {
-            var result= await _productService.GetAllProductsAsync(sort);
+            var result= await _productService.GetAllProductsAsync(sort,brandId,typeId);
             return Ok(result); 
         }
 
