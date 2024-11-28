@@ -1,6 +1,10 @@
 ﻿using Store.Repository.Data.Contexts;
 using Store.Repository.Data;
 using Microsoft.EntityFrameworkCore;
+using Store.Repository.Identity.Contexts;
+using Store.Repository.Identity;
+using Microsoft.AspNetCore.Identity;
+using Store.Core.Entities.Identity;
 
 namespace Store.API.Helper
 {
@@ -12,7 +16,10 @@ namespace Store.API.Helper
 
             var services = scope.ServiceProvider;
 
-            var context = services.GetRequiredService<StoreDbContext>();
+            var context = services.GetRequiredService<StoreDbContext>(); //ASK CLR Create Object StoreDbContext
+            var identityContext = services.GetRequiredService<StoreIdentityDbContext>();
+            var userManger = services.GetRequiredService<UserManager<AppUser>>();
+
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
 
             try
@@ -20,6 +27,8 @@ namespace Store.API.Helper
                 await context.Database.MigrateAsync();
                 await StoreDbContextSeed.SeedAsync(context);
 
+                await identityContext.Database.MigrateAsync();
+                await StoreIdentityDbContextSeed.SeedAppUserAsync(userManger);
             }
             catch (Exception ex)
             {

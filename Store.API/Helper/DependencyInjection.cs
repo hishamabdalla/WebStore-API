@@ -5,6 +5,9 @@ using Store.Repository;
 using Store.Repository.Data.Contexts;
 using Store.Service.Services.Products;
 using Store.Core.Mapping.Products;
+using Store.Repository.Identity.Contexts;
+using Store.Core.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace Store.API.Helper
 {
@@ -18,6 +21,7 @@ namespace Store.API.Helper
             services.AddDbContextService(configuration);
             services.AddUserDefindService();
             services.AddAutoMapperService(configuration);
+            services.AddIdentityService();
 
 
             return services;
@@ -43,6 +47,11 @@ namespace Store.API.Helper
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             });
+            
+            services.AddDbContext<StoreIdentityDbContext>(options =>
+            {
+                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+            });
 
             return services;
         }
@@ -55,6 +64,13 @@ namespace Store.API.Helper
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration))); 
+            return services;
+        }
+
+        private static IServiceCollection AddIdentityService(this IServiceCollection services)
+        {
+            services.AddIdentity<AppUser,IdentityRole>()
+                .AddEntityFrameworkStores<StoreIdentityDbContext>();
             return services;
         }
     } 
