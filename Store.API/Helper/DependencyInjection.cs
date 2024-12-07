@@ -8,6 +8,9 @@ using Store.Core.Mapping.Products;
 using Store.Repository.Identity.Contexts;
 using Store.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
+using Store.Core.Services.Contract;
+using Store.Service.Services.Tokens;
+using Store.Service.Users;
 
 namespace Store.API.Helper
 {
@@ -59,6 +62,8 @@ namespace Store.API.Helper
         {
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenService, TokenService>();
+            services.AddScoped<IUserService, UserService>();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
