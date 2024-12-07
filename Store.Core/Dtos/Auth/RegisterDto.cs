@@ -13,8 +13,8 @@ namespace Store.Core.Dtos.Auth
         [EmailAddress]
         public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Username is Required")]
-        public string Username { get; set; } = string.Empty;
+        [Required(ErrorMessage = "DisplayName is Required")]
+        public string DisplayName { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "PhoneNumber is Required")]
         [DataType(DataType.PhoneNumber)]

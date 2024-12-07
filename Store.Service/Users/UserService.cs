@@ -4,49 +4,95 @@ using Store.Core.Dtos.Auth;
 using Store.Core.Entities.Identity;
 using Store.Core.Services.Contract;
 using Store.Service.Services.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Store.Service.Users
 {
+    /// <summary>
+    /// Provides services for user authentication and registration.
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
-        public UserService(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, ITokenService tokenService)
+
+        /// <summary>
+        /// Initializes a new instance of <see cref="UserService"/>.
+        /// </summary>
+        /// <param name="userManager">Identity user manager for managing users.</param>
+        /// <param name="signInManager">Identity sign-in manager for authentication.</param>
+        /// <param name="tokenService">Token service for generating JWT tokens.</param>
+        public UserService(
+            UserManager<AppUser> userManager,
+            SignInManager<AppUser> signInManager,
+            ITokenService tokenService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
         }
+
+       
+        /// <inheritdoc />
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
-            var user = await _userManager.FindByNameAsync(loginDto.Email);
+            // Validate input
+            if (loginDto == null) throw new ArgumentNullException(nameof(loginDto));
 
+            // Find the user by email
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user == null) return null;
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
 
+            // Verify the password
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
             if (!result.Succeeded) return null;
 
-            return new UserDto()
+            // Return a DTO with user details and token
+            return await GenerateUserDtoAsync(user);
+        }
+
+        /// <inheritdoc />
+        public async Task<UserDto> RegisterAsync(RegisterDto registerDto)
+        {
+          if(await CheckEmailExits(registerDto.Email)) return null;
+
+            var user = new AppUser()
             {
-                Email = user.Email,
-                Username = user.UserName,
-                Token = await _tokenService.CreateTokenAsync(user, _userManager)
+                Email = registerDto.Email,
+                DisplayName = registerDto.DisplayName,
+                UserName = registerDto.Email.Split("@")[0],
+                PhoneNumber = registerDto.PhoneNumber,
 
             };
+           var result=await  _userManager.CreateAsync(user,registerDto.Password);
+
+            if(!result.Succeeded) return null;
+
+            return await GenerateUserDtoAsync(user) ;
+
 
         }
 
-        public Task<UserDto> RegisterAsync(RegisterDto registerDto)
+        /// <summary>
+        /// Generates a <see cref="UserDto"/> for a given user, including a JWT token.
+        /// </summary>
+        /// <param name="user">The application user.</param>
+        /// <returns>A task that represents the asynchronous operation, containing the user DTO.</returns>
+        private async Task<UserDto> GenerateUserDtoAsync(AppUser user)
         {
-            throw new NotImplementedException();
+            return new UserDto
+            {
+                Email = user.Email,
+                DisplayName = user.DisplayName ,
+                Token = await _tokenService.CreateTokenAsync(user, _userManager)
+            };
         }
+
+        public async Task<bool> CheckEmailExits(string email)
+        {
+           return await _userManager.FindByEmailAsync(email) is not null;
+        }
+
     }
-
 }
-
