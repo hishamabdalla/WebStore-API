@@ -11,6 +11,9 @@ using Microsoft.AspNetCore.Identity;
 using Store.Core.Services.Contract;
 using Store.Service.Services.Tokens;
 using Store.Service.Users;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Store.API.Helper
 {
@@ -25,6 +28,7 @@ namespace Store.API.Helper
             services.AddUserDefindService();
             services.AddAutoMapperService(configuration);
             services.AddIdentityService();
+            services.AddAuthenticationService(configuration);
 
 
             return services;
@@ -74,8 +78,31 @@ namespace Store.API.Helper
 
         private static IServiceCollection AddIdentityService(this IServiceCollection services)
         {
-            services.AddIdentity<AppUser,IdentityRole>()
+            services.AddIdentity<AppUser, IdentityRole>()
                 .AddEntityFrameworkStores<StoreIdentityDbContext>();
+            return services;
+        }
+        private static IServiceCollection AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = configuration["Jwt:Issuer"],
+                    ValidAudience = configuration["Jwt:Audience"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]))
+                };
+            });
+
             return services;
         }
     } 

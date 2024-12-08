@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store.Core.Services.Interfaces;
 using Store.Core.Specifications.Products;
 
 namespace Store.API.Controllers
 {
-  
+    [Authorize]
     public class ProductsController : BaseApiController
     {
         private readonly IProductService _productService;
