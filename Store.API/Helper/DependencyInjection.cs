@@ -14,6 +14,7 @@ using Store.Service.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Store.Core.Mapping.Auth;
 
 namespace Store.API.Helper
 {
@@ -73,6 +74,7 @@ namespace Store.API.Helper
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration))); 
+            services.AddAutoMapper(m => m.AddProfile(new AuthProfile()));
             return services;
         }
 

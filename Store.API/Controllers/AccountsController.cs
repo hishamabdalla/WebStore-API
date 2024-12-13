@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Store.API.Extensions;
 using Store.Core;
 using Store.Core.Dtos.Auth;
 using Store.Core.Entities.Identity;
@@ -14,12 +17,14 @@ namespace Store.API.Controllers
         private readonly IUserService _userService;
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
 
-        public AccountsController(IUserService userService,UserManager<AppUser> userManager,ITokenService tokenService)
+        public AccountsController(IUserService userService, UserManager<AppUser> userManager, ITokenService tokenService, IMapper mapper)
         {
             _userService = userService;
-           _userManager = userManager;
+            _userManager = userManager;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
         [HttpPost("login")]
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
@@ -49,6 +54,7 @@ namespace Store.API.Controllers
             return Ok(user);
         }
 
+        [Authorize]
         [HttpGet("GetCurrentUser")]
         public async Task<IActionResult> GetCurrentUser()
         {
@@ -68,5 +74,17 @@ namespace Store.API.Controllers
             });
            
         }
+        [Authorize]
+        [HttpGet("Address")]
+        public async Task<IActionResult> GetCurrentUserAddress()
+        {
+           
+            var user = await _userManager.FindByEmailWithAddress(User);
+
+            if (user == null) return BadRequest();
+
+            return Ok(_mapper.Map<AddressDto>(user.Address));
+        }
+
     }
 }
