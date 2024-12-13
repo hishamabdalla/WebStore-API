@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Store.API.Errors;
 using Store.API.Extensions;
 using Store.Core;
 using Store.Core.Dtos.Auth;
@@ -18,6 +19,7 @@ namespace Store.API.Controllers
         private readonly UserManager<AppUser> _userManager;
         private readonly ITokenService _tokenService;
         private readonly IMapper _mapper;
+
 
         public AccountsController(IUserService userService, UserManager<AppUser> userManager, ITokenService tokenService, IMapper mapper)
         {
@@ -64,7 +66,7 @@ namespace Store.API.Controllers
 
             var user =await _userManager.FindByEmailAsync(userEmail);
 
-            if(user == null) return BadRequest();  
+            if(user == null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));  
 
             return Ok(  new UserDto
             {
@@ -81,10 +83,12 @@ namespace Store.API.Controllers
            
             var user = await _userManager.FindByEmailWithAddress(User);
 
-            if (user == null) return BadRequest();
+            if (user == null) return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
 
             return Ok(_mapper.Map<AddressDto>(user.Address));
         }
+
+      
 
     }
 }

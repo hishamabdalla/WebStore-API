@@ -1,4 +1,5 @@
-﻿using Store.Core;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Store.Core;
 using Store.Core.Entities;
 using Store.Core.Repositories.Interfaces;
 using Store.Repository.Data.Contexts;
@@ -17,6 +18,7 @@ namespace Store.Repository
     {
         // The database context used to interact with the data source.
         private readonly StoreDbContext _context;
+        private readonly IdentityDbContext _identityContext;
 
         // A Hashtable to store instantiated repositories by entity type.
         private Hashtable _repositories;
@@ -30,8 +32,9 @@ namespace Store.Repository
 
         
         public async Task<int> CompleteAsync() => await _context.SaveChangesAsync();
+        public async Task<int> CompleteIdentityAsync() => await _identityContext.SaveChangesAsync();
 
-       
+
         public IGenericRepository<TEntity, TKey> Repository<TEntity, TKey>() where TEntity : BaseEntity<TKey>
         {
             // Check if a repository for the given entity type already exists.

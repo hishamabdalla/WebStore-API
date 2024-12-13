@@ -21,6 +21,7 @@ namespace Store.Core
         /// The task result contains the number of state entries written to the database.
         /// </returns>
         Task<int> CompleteAsync();
+        Task<int> CompleteIdentityAsync();
 
         /// <summary>
         /// Provides access to a generic repository for the specified entity type.

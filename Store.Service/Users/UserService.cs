@@ -1,9 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Store.Core;
 using Store.Core.Dtos.Auth;
 using Store.Core.Entities.Identity;
 using Store.Core.Services.Contract;
 using Store.Service.Services.Tokens;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Store.Service.Users
@@ -16,6 +19,10 @@ namespace Store.Service.Users
         private readonly UserManager<AppUser> _userManager;
         private readonly SignInManager<AppUser> _signInManager;
         private readonly ITokenService _tokenService;
+        private readonly IMapper _mapper;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IdentityDbContext _identityDbContext;
+
 
         /// <summary>
         /// Initializes a new instance of <see cref="UserService"/>.
@@ -26,14 +33,16 @@ namespace Store.Service.Users
         public UserService(
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
-            ITokenService tokenService)
+            ITokenService tokenService,
+            IMapper mapper)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
+            _mapper = mapper;
         }
 
-       
+
         /// <inheritdoc />
         public async Task<UserDto> LoginAsync(LoginDto loginDto)
         {
@@ -94,5 +103,6 @@ namespace Store.Service.Users
            return await _userManager.FindByEmailAsync(email) is not null;
         }
 
+       
     }
 }
