@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Store.Core.Mapping.Auth;
+using Microsoft.AspNetCore.Mvc;
+using Store.API.Errors;
 
 namespace Store.API.Helper
 {
@@ -30,7 +32,7 @@ namespace Store.API.Helper
             services.AddAutoMapperService(configuration);
             services.AddIdentityService();
             services.AddAuthenticationService(configuration);
-
+            services.ConfigureInvalidModelStateResponseService();
 
             return services;
         }
@@ -73,9 +75,30 @@ namespace Store.API.Helper
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration))); 
+            services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration)));
             services.AddAutoMapper(m => m.AddProfile(new AuthProfile()));
             return services;
+        }
+        private static IServiceCollection ConfigureInvalidModelStateResponseService(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.InvalidModelStateResponseFactory = (actionContext) =>
+                {
+                    var errors = actionContext.ModelState.Where(P => P.Value.Errors.Count() > 0)
+                                             .SelectMany(P => P.Value.Errors)
+                                             .Select(E => E.ErrorMessage)
+                                             .ToArray();
+                    var response = new ApiValidationErrorResponse()
+                    {
+
+                        Errors = errors
+                    };
+
+                    return new BadRequestObjectResult(response);
+                };
+            });
+            return services;    
         }
 
         private static IServiceCollection AddIdentityService(this IServiceCollection services)
