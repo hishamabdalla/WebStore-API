@@ -5,6 +5,7 @@ using Store.Repository.Identity.Contexts;
 using Store.Repository.Identity;
 using Microsoft.AspNetCore.Identity;
 using Store.Core.Entities.Identity;
+using Store.API.Middlewares;
 
 namespace Store.API.Helper
 {
@@ -35,6 +36,7 @@ namespace Store.API.Helper
                 var logger = loggerFactory.CreateLogger<Program>();
                 logger.LogError(ex, "There Are Problems During Apply Migrations !");
             }
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
