@@ -21,6 +21,7 @@ using Store.Core.Repositories.Interfaces;
 using Store.Repository.Repositories;
 using StackExchange.Redis;
 using Store.Core.Mapping.Basket;
+using Store.Service.Services.Caches;
 
 namespace Store.API.Helper
 {
@@ -77,6 +78,7 @@ namespace Store.API.Helper
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBasketRepository, BasketRepository >();
+            services.AddScoped<ICacheService, CacheService >();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)

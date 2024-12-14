@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Store.API.Attributes;
 using Store.API.Errors;
 using Store.Core.Dtos.Products;
 using Store.Core.Helper;
@@ -9,7 +10,7 @@ using Store.Core.Specifications.Products;
 
 namespace Store.API.Controllers
 {
-    [Authorize]
+   // [Authorize]
     public class ProductsController : BaseApiController
     {
         private readonly IProductService _productService;
@@ -21,6 +22,7 @@ namespace Store.API.Controllers
 
         [ProducesResponseType(typeof(PaginationResponse<ProductDto>),StatusCodes.Status200OK)]
         [HttpGet] // Get : BaseUrl/api/Products
+        [Cached(100)]
         public async Task<ActionResult<PaginationResponse<ProductDto>>> GetAllProducts([FromQuery] ProductSpecParams productSpec )
         {
             var result= await _productService.GetAllProductsAsync(productSpec);

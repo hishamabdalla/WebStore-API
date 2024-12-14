@@ -21,7 +21,7 @@ namespace Store.API.Middlewares
         {
             try
             {
-                next.Invoke(context);
+                await next.Invoke(context);
             } 
             catch (Exception ex)
             {
@@ -34,7 +34,9 @@ namespace Store.API.Middlewares
                     new ApiExceptionResponse(StatusCodes.Status500InternalServerError, ex.Message, ex.StackTrace.ToString())
                     : new ApiExceptionResponse(StatusCodes.Status500InternalServerError);
 
-               var json= JsonSerializer.Serialize(response);
+                var option = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+
+                var json = JsonSerializer.Serialize(response,option);
 
                await context.Response.WriteAsync(json);
             }
