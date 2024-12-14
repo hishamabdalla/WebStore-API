@@ -17,6 +17,10 @@ using System.Text;
 using Store.Core.Mapping.Auth;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Errors;
+using Store.Core.Repositories.Interfaces;
+using Store.Repository.Repositories;
+using StackExchange.Redis;
+using Store.Core.Mapping.Basket;
 
 namespace Store.API.Helper
 {
@@ -33,6 +37,7 @@ namespace Store.API.Helper
             services.AddIdentityService();
             services.AddAuthenticationService(configuration);
             services.ConfigureInvalidModelStateResponseService();
+            services.AddRedisService(configuration);
 
             return services;
         }
@@ -71,12 +76,14 @@ namespace Store.API.Helper
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IBasketRepository, BasketRepository >();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration)));
             services.AddAutoMapper(m => m.AddProfile(new AuthProfile()));
+            services.AddAutoMapper(m => m.AddProfile(new BasketProfile()));
             return services;
         }
         private static IServiceCollection ConfigureInvalidModelStateResponseService(this IServiceCollection services)
@@ -128,6 +135,18 @@ namespace Store.API.Helper
                 };
             });
 
+            return services;
+        }
+
+        private static IServiceCollection AddRedisService(this IServiceCollection services,IConfiguration configuration)
+        {
+            services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
+            {
+              
+
+                var connection = configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(connection);
+            });
             return services;
         }
     } 
