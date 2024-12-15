@@ -8,6 +8,20 @@ namespace Store.Core.Entities.Order
 {
     public class Order:BaseEntity<int>
     {
+        public Order()
+        {
+            
+        }
+        public Order(string buyerEmail, Address shippingAddress,  DeliveryMethod deliveryMethod, ICollection<OrderItem> items, decimal subTotal, string paymentInternId)
+        {
+            BuyerEmail = buyerEmail;
+            ShippingAddress = shippingAddress;
+            DeliveryMethod = deliveryMethod;
+            Items = items;
+            SubTotal = subTotal;
+            PaymentInternId = paymentInternId;
+        }
+
         public string BuyerEmail {  get; set; }
         public DateTimeOffset? OrderDate { get; set; }= DateTimeOffset.Now;
         public OrderStatus Status { get; set; }=OrderStatus.Pending;

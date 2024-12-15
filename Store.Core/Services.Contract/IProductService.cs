@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.Core.Services.Interfaces
+namespace Store.Core.Services.Contract
 {
     public interface IProductService
     {

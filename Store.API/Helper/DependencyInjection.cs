@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Store.Core.Services.Interfaces;
 using Store.Core;
 using Store.Repository;
 using Store.Repository.Data.Contexts;

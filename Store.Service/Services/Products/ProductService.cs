@@ -3,12 +3,12 @@ using Store.Core;
 using Store.Core.Dtos.Products;
 using Store.Core.Entities;
 using Store.Core.Helper;
-using Store.Core.Services.Interfaces;
+using Store.Core.Services.Contract;
 using Store.Core.Specifications;
 using Store.Core.Specifications.Products;
 using System;
 using System.Collections.Generic;
-using System.Linq; 
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 

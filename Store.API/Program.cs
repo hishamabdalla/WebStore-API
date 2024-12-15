@@ -6,7 +6,7 @@ using Store.API.Errors;
 using Store.API.Helper;
 using Store.Core;
 using Store.Core.Mapping.Products;
-using Store.Core.Services.Interfaces;
+using Store.Core.Services.Contract;
 using Store.Repository;
 using Store.Repository.Data;
 using Store.Repository.Data.Contexts;
