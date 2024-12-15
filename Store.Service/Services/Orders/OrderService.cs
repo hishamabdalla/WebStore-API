@@ -3,6 +3,7 @@ using Store.Core.Entities;
 using Store.Core.Entities.Order;
 using Store.Core.Repositories.Interfaces;
 using Store.Core.Services.Contract;
+using Store.Core.Specifications.Orders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,14 +58,22 @@ namespace Store.Service.Services.Orders
             return order;
         }
 
-        public Task<Order?> GetOrderByIdForSpecificUser(string buyerEmail, int orderId)
+        public async Task<Order?> GetOrderByIdForSpecificUser(string buyerEmail, int orderId)
         {
-            throw new NotImplementedException();
+            var spec=new OrderSpecifications(buyerEmail, orderId);
+            var order=await unitOfWork.Repository<Order, int>().GetWithSpecAsync(spec);
+
+            if(order==null) return null;
+            return order;
         }
 
-        public Task<IEnumerable<Order>?> GetOrderForSpecificUser(string buyerEmail)
+        public async Task<IEnumerable<Order>?> GetOrderForSpecificUser(string buyerEmail)
         {
-            throw new NotImplementedException();
+            var spec = new OrderSpecifications(buyerEmail);
+            var orders = await unitOfWork.Repository<Order, int>().GetAllWithSpecAsync(spec);
+
+            if (orders == null) return null;
+            return orders;
         }
     }
 }
