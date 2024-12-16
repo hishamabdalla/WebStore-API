@@ -23,6 +23,7 @@ using Store.Core.Mapping.Basket;
 using Store.Service.Services.Caches;
 using Store.Core.Mapping.Orders;
 using Store.Service.Services.Orders;
+using Store.Service.Services.Payments;
 
 namespace Store.API.Helper
 {
@@ -81,6 +82,7 @@ namespace Store.API.Helper
             services.AddScoped<IBasketRepository, BasketRepository >();
             services.AddScoped<ICacheService, CacheService >();
             services.AddScoped<IOrderService, OrderService >();
+            services.AddScoped<IPaymentService, PaymentService >();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)

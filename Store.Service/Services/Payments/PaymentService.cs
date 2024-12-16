@@ -27,7 +27,7 @@ namespace Store.Service.Services.Payments
         }
         public async Task<UserBasket> SetPaymentIntentIdAsync(string basketId)
         {
-            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey "];
+            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
             var basket= await basketRepository.GetBasketAsync(basketId);
             if (basket == null) return null;
 
@@ -65,8 +65,8 @@ namespace Store.Service.Services.Payments
                 var options = new PaymentIntentCreateOptions()
                 {
                     Amount= (long)(subTotal*100+shippingPrice*100),
-                    PaymentMethodTypes=new List<string>() { "cart"},
-                    Currency="usd"
+                    Currency = "usd",
+                    PaymentMethodTypes = new List<string> { "card" },
                 };
                 paymentIntent = await service.CreateAsync(options);
                 basket.PaymentIntentId=paymentIntent.Id;
