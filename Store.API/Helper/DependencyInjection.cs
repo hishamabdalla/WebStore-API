@@ -21,6 +21,8 @@ using Store.Repository.Repositories;
 using StackExchange.Redis;
 using Store.Core.Mapping.Basket;
 using Store.Service.Services.Caches;
+using Store.Core.Mapping.Orders;
+using Store.Service.Services.Orders;
 
 namespace Store.API.Helper
 {
@@ -78,6 +80,7 @@ namespace Store.API.Helper
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IBasketRepository, BasketRepository >();
             services.AddScoped<ICacheService, CacheService >();
+            services.AddScoped<IOrderService, OrderService >();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
@@ -85,6 +88,7 @@ namespace Store.API.Helper
             services.AddAutoMapper(m => m.AddProfile(new ProductProfile(configuration)));
             services.AddAutoMapper(m => m.AddProfile(new AuthProfile()));
             services.AddAutoMapper(m => m.AddProfile(new BasketProfile()));
+            services.AddAutoMapper(m => m.AddProfile(new OrderProfile(configuration)));
             return services;
         }
         private static IServiceCollection ConfigureInvalidModelStateResponseService(this IServiceCollection services)

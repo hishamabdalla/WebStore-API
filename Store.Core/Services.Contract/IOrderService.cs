@@ -11,7 +11,7 @@ namespace Store.Core.Services.Contract
     {
          Task<Order?> CreateOrderAsync(string buyerEmail,string basketId, int deliveryMethodId,Address shippingAddress);
 
-         Task<IEnumerable<Order>?> GetOrderForSpecificUser(string buyerEmail);
+         Task<IEnumerable<Order>?> GetOrdersForSpecificUser(string buyerEmail);
          Task<Order?> GetOrderByIdForSpecificUser(string buyerEmail,int orderId);
     }
 }

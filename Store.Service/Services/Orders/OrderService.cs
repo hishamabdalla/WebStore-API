@@ -67,7 +67,7 @@ namespace Store.Service.Services.Orders
             return order;
         }
 
-        public async Task<IEnumerable<Order>?> GetOrderForSpecificUser(string buyerEmail)
+        public async Task<IEnumerable<Order>?> GetOrdersForSpecificUser(string buyerEmail)
         {
             var spec = new OrderSpecifications(buyerEmail);
             var orders = await unitOfWork.Repository<Order, int>().GetAllWithSpecAsync(spec);
