@@ -16,24 +16,24 @@ namespace Store.Repository.Identity
             { 
                 var user = new AppUser()
                 {
-                    Email = "hishvmabdalla@gmail.com",
-                    DisplayName = "Hisham Abdalla",
-                    UserName = "Hishvm",
+                    Email = "Admin@gmail.com",
+                    DisplayName = "Admin",
+                    UserName = "Admin",
                     PhoneNumber = "0100000000",
+                    
                     Address = new Address()
                     {
-                        FName = "Hisham",
-                        LName = "Abdalla",
+                        FName = "Admin",
+                        LName = "Admin",
                         City = "Mansoura",
                         Country = "Egypt",
                         Street = "123"
-
-
-
                     }
+                    ,
                 };
 
-            await _userManager.CreateAsync(user, "Hisham@123");
+                await _userManager.CreateAsync(user, "Admin@123");
+                await _userManager.AddToRoleAsync(user, "Admin");
              }
          }
     }

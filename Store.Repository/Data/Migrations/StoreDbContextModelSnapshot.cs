@@ -50,7 +50,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryMethods");
+                    b.ToTable("DeliveryMethods", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Order.Order", b =>
@@ -89,7 +89,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasIndex("DeliveryMethodId");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Order.OrderItem", b =>
@@ -116,7 +116,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("Items");
+                    b.ToTable("Items", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Product", b =>
@@ -158,7 +158,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasIndex("TypeId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.ProductBrand", b =>
@@ -178,7 +178,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.ProductType", b =>
@@ -198,7 +198,7 @@ namespace Store.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Types");
+                    b.ToTable("Types", (string)null);
                 });
 
             modelBuilder.Entity("Store.Core.Entities.Order.Order", b =>
@@ -209,7 +209,7 @@ namespace Store.Repository.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Store.Core.Entities.Order.Address", "ShippingAddress", b1 =>
+                    b.OwnsOne("Store.Core.Entities.Order.Order.ShippingAddress#Store.Core.Entities.Order.Address", "ShippingAddress", b1 =>
                         {
                             b1.Property<int>("OrderId")
                                 .HasColumnType("int");
@@ -236,7 +236,7 @@ namespace Store.Repository.Data.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Orders");
+                            b1.ToTable("Orders", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -254,7 +254,7 @@ namespace Store.Repository.Data.Migrations
                         .WithMany("Items")
                         .HasForeignKey("OrderId");
 
-                    b.OwnsOne("Store.Core.Entities.Order.ProductItemOrder", "Product", b1 =>
+                    b.OwnsOne("Store.Core.Entities.Order.OrderItem.Product#Store.Core.Entities.Order.ProductItemOrder", "Product", b1 =>
                         {
                             b1.Property<int>("OrderItemId")
                                 .HasColumnType("int");
@@ -272,7 +272,7 @@ namespace Store.Repository.Data.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("Items");
+                            b1.ToTable("Items", (string)null);
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");

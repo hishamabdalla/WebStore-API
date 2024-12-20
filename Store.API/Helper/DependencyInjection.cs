@@ -24,7 +24,7 @@ using Store.Service.Services.Caches;
 using Store.Core.Mapping.Orders;
 using Store.Service.Services.Orders;
 using Store.Service.Services.Payments;
-
+using Role = Store.Core.Entities.Identity.Role;
 namespace Store.API.Helper
 {
     public static class DependencyInjection
@@ -117,8 +117,16 @@ namespace Store.API.Helper
 
         private static IServiceCollection AddIdentityService(this IServiceCollection services)
         {
-            services.AddIdentity<AppUser, IdentityRole>()
-                .AddEntityFrameworkStores<StoreIdentityDbContext>();
+            
+            services.AddIdentity<AppUser,Role>(options =>
+            {
+                // Configure lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
+                options.Lockout.MaxFailedAccessAttempts = 5; // Maximum failed attempts before lockout
+                options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
+            })
+.AddEntityFrameworkStores<StoreIdentityDbContext>()
+.AddDefaultTokenProviders();
             return services;
         }
         private static IServiceCollection AddAuthenticationService(this IServiceCollection services, IConfiguration configuration)

@@ -9,7 +9,7 @@ namespace Store.Core
 {
     public interface IUserService
     {
-       Task<UserDto> LoginAsync(LoginDto loginDto);
+       Task<LoginResponseDto> LoginAsync(LoginDto loginDto);
        Task<UserDto> RegisterAsync(RegisterDto registerDto);
        Task<bool> CheckEmailExits(string email);
 

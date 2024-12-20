@@ -18,7 +18,7 @@ namespace Store.Service.Services.Orders
         private readonly IBasketRepository basketRepository;
         private readonly IPaymentService paymentService;
 
-        public OrderService(IUnitOfWork unitOfWork,IBasketRepository basketRepository,IPaymentService paymentService)
+        public OrderService(IUnitOfWork unitOfWork,IBasketRepository basketRepository,IPaymentService paymentService) 
         {
             this.unitOfWork = unitOfWork;
             this.basketRepository = basketRepository;

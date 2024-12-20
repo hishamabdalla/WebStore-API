@@ -44,21 +44,41 @@ namespace Store.Service.Users
 
 
         /// <inheritdoc />
-        public async Task<UserDto> LoginAsync(LoginDto loginDto)
+        public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
         {
             // Validate input
-            if (loginDto == null) throw new ArgumentNullException(nameof(loginDto));
+            if (loginDto == null)
+                throw new ArgumentNullException(nameof(loginDto));
 
             // Find the user by email
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null) return null;
+            if (user == null)
+            {
+                return new LoginResponseDto
+                {
+                    ErrorMessage = "Invalid login credentials."
+                };
+            }
 
-            // Verify the password
-            var result = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: false);
-            if (!result.Succeeded) return null;
+            // Verify the password and handle lockout
+            var passwordCheckResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: true);
+            if (!passwordCheckResult.Succeeded)
+            {
+                return new LoginResponseDto
+                {
+                    ErrorMessage = "Invalid login credentials."
+                };
+            }
 
-            // Return a DTO with user details and token
-            return await GenerateUserDtoAsync(user);
+            // Generate the response DTO with user details and token
+            var response = await GenerateUserDtoAsync(user);
+
+            return new LoginResponseDto
+            {
+                DisplayName=response.DisplayName,
+                Email=response.Email,
+                Token=response.Token
+            };
         }
 
         /// <inheritdoc />
@@ -72,12 +92,13 @@ namespace Store.Service.Users
                 DisplayName = registerDto.DisplayName,
                 UserName = registerDto.Email.Split("@")[0],
                 PhoneNumber = registerDto.PhoneNumber,
-
+                 
             };
            var result=await  _userManager.CreateAsync(user,registerDto.Password);
 
             if(!result.Succeeded) return null;
 
+            await _userManager.AddToRoleAsync(user, "Customer");
             return await GenerateUserDtoAsync(user) ;
 
 

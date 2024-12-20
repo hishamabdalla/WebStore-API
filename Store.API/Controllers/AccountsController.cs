@@ -32,13 +32,11 @@ namespace Store.API.Controllers
         public async Task<IActionResult> LoginAsync(LoginDto loginDto)
         {
             var user = await _userService.LoginAsync(loginDto);
-
             if(user == null)
             {
-                //error
-                return Unauthorized();
+            
+                return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
             }
-
             return Ok(user);
         }
 
