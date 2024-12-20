@@ -86,7 +86,15 @@ namespace Store.API.Controllers
             return Ok(_mapper.Map<AddressDto>(user.Address));
         }
 
-      
+        [HttpPost("SendOTP")]
+        public async Task<IActionResult> SentOtp(string Email)
+        {
+          await _userService.SendOtpMail(Email);
+            return Ok();
+            
+        }
+
+
 
     }
 }

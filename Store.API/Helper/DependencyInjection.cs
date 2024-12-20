@@ -25,6 +25,8 @@ using Store.Core.Mapping.Orders;
 using Store.Service.Services.Orders;
 using Store.Service.Services.Payments;
 using Role = Store.Core.Entities.Identity.Role;
+using Store.Service.Email;
+using Store.Core.Entities.Email;
 namespace Store.API.Helper
 {
     public static class DependencyInjection
@@ -41,6 +43,7 @@ namespace Store.API.Helper
             services.AddAuthenticationService(configuration);
             services.ConfigureInvalidModelStateResponseService();
             services.AddRedisService(configuration);
+            services.AddEmailConfigurationsService(configuration);
 
             return services;
         }
@@ -73,8 +76,15 @@ namespace Store.API.Helper
 
             return services;
         }
+        private static IServiceCollection AddEmailConfigurationsService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<EmailSettings>(configuration.GetSection("EmailSettings"));
+            return services;
+        }
+
         private static IServiceCollection AddUserDefindService(this IServiceCollection services)
         {
+           
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenService, TokenService>();
@@ -83,6 +93,7 @@ namespace Store.API.Helper
             services.AddScoped<ICacheService, CacheService >();
             services.AddScoped<IOrderService, OrderService >();
             services.AddScoped<IPaymentService, PaymentService >();
+            services.AddScoped<IEmailService, EmailService >();
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)

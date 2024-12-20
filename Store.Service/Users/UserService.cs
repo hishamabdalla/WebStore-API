@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using AutoMapper.Internal;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Store.Core;
 using Store.Core.Dtos.Auth;
+using Store.Core.Entities.Email;
 using Store.Core.Entities.Identity;
 using Store.Core.Services.Contract;
 using Store.Service.Services.Tokens;
@@ -22,6 +24,7 @@ namespace Store.Service.Users
         private readonly IMapper _mapper;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IdentityDbContext _identityDbContext;
+        private readonly IEmailService _emailService;
 
 
         /// <summary>
@@ -34,12 +37,14 @@ namespace Store.Service.Users
             UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
-            IMapper mapper)
+            IMapper mapper,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
 
@@ -123,7 +128,50 @@ namespace Store.Service.Users
         {
            return await _userManager.FindByEmailAsync(email) is not null;
         }
+        private string GenerateRandomNumber()
+        {
+            Random random = new Random();
+            string randomno = random.Next(0, 1000000).ToString("D6");
+            return randomno;
+        }
+        public async Task SendOtpMail(string email)
+        {
+            var mailrequest = new MailRequest();
+            mailrequest.MailTo = email;
+            mailrequest.Subject = "Thanks for registering : OTP";
+            var OtpText=GenerateRandomNumber();
+            var Name = email.Split('@')[0];
+            mailrequest.Body = GenerateEmailBody(Name, OtpText);
+            await this._emailService.SendEmail(mailrequest);
 
-       
+
+        }
+        private string GenerateEmailBody(string name, string otptext)
+        {
+            string emailbody = "";
+            emailbody += "<div style='width:100%; background-color:#f5f5f5; padding:20px; font-family:Arial, sans-serif;'>";
+            emailbody += "  <div style='max-width:600px; margin:0 auto; background-color:#ffffff; border:1px solid #ddd; border-radius:10px; overflow:hidden;'>";
+            emailbody += "    <div style='background-color:#4CAF50; color:#ffffff; padding:15px; text-align:center;'>";
+            emailbody += "      <h1 style='margin:0;'>Welcome to Our Service</h1>";
+            emailbody += "    </div>";
+            emailbody += "    <div style='padding:20px; line-height:1.6; color:#333;'>";
+            emailbody += "      <h2 style='margin:0 0 10px;'>Hello " + name + ",</h2>";
+            emailbody += "      <p>Thank you for registering with us. Please use the OTP below to complete your registration process:</p>";
+            emailbody += "      <div style='text-align:center; margin:20px 0;'>";
+            emailbody += "        <span style='display:inline-block; background-color:#f0f0f0; padding:10px 20px; font-size:24px; border:1px solid #ddd; border-radius:5px; letter-spacing:2px;'>" + otptext + "</span>";
+            emailbody += "      </div>";
+            emailbody += "      <p style='margin:20px 0 0;'>If you did not request this OTP, please ignore this email or contact support if you have any concerns.</p>";
+            emailbody += "    </div>";
+            emailbody += "    <div style='background-color:#f5f5f5; padding:10px; text-align:center; color:#666; font-size:12px;'>";
+            emailbody += "      <p style='margin:0;'>This is an automated message. Please do not reply.</p>";
+            emailbody += "      <p style='margin:5px 0;'>Contact Support: <a href='mailto:support@ourservice.com' style='color:#4CAF50;'>support@ourservice.com</a></p>";
+            emailbody += "    </div>";
+            emailbody += "  </div>";
+            emailbody += "</div>";
+
+            return emailbody;
+        }
+
+
     }
 }
