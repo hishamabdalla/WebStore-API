@@ -29,7 +29,7 @@ namespace Store.Repository.Identity
                         Country = "Egypt",
                         Street = "123"
                     }
-                    ,
+                    ,EmailConfirmed = true
                 };
 
                 await _userManager.CreateAsync(user, "Admin@123");

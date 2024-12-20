@@ -131,10 +131,12 @@ namespace Store.API.Helper
             
             services.AddIdentity<AppUser,Role>(options =>
             {
+                options.SignIn.RequireConfirmedEmail= true;
                 // Configure lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
                 options.Lockout.MaxFailedAccessAttempts = 5; // Maximum failed attempts before lockout
                 options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
+                options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
 .AddEntityFrameworkStores<StoreIdentityDbContext>()
 .AddDefaultTokenProviders();

@@ -66,12 +66,20 @@ namespace Store.Service.Users
             }
 
             // Verify the password and handle lockout
-            var passwordCheckResult = await _signInManager.CheckPasswordSignInAsync(user, loginDto.Password, lockoutOnFailure: true);
-            if (!passwordCheckResult.Succeeded)
+            var passwordCheckResult = await _userManager.CheckPasswordAsync(user, loginDto.Password);
+            if (!passwordCheckResult)
             {
                 return new LoginResponseDto
                 {
                     ErrorMessage = "Invalid login credentials."
+                };
+            }
+
+            if(!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return new LoginResponseDto
+                {
+                    ErrorMessage = "Email is not confirmed"
                 };
             }
 
@@ -87,7 +95,7 @@ namespace Store.Service.Users
         }
 
         /// <inheritdoc />
-        public async Task<UserDto> RegisterAsync(RegisterDto registerDto)
+        public async Task<string> RegisterAsync(RegisterDto registerDto)
         {
           if(await CheckEmailExits(registerDto.Email)) return null;
 
@@ -104,7 +112,10 @@ namespace Store.Service.Users
             if(!result.Succeeded) return null;
 
             await _userManager.AddToRoleAsync(user, "Customer");
-            return await GenerateUserDtoAsync(user) ;
+            //await SendOtpMailAsync(registerDto.Email);
+            var OTP= _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            return await OTP ;
 
 
         }
@@ -128,20 +139,15 @@ namespace Store.Service.Users
         {
            return await _userManager.FindByEmailAsync(email) is not null;
         }
-        private string GenerateRandomNumber()
-        {
-            Random random = new Random();
-            string randomno = random.Next(0, 1000000).ToString("D6");
-            return randomno;
-        }
-        public async Task SendOtpMail(string email)
+       
+        private async Task SendOtpMailAsync(string email)
         {
             var mailrequest = new MailRequest();
             mailrequest.MailTo = email;
             mailrequest.Subject = "Thanks for registering : OTP";
-            var OtpText=GenerateRandomNumber();
-            var Name = email.Split('@')[0];
-            mailrequest.Body = GenerateEmailBody(Name, OtpText);
+            var user = await _userManager.FindByEmailAsync(email);
+            var OtpText = _userManager.GenerateEmailConfirmationTokenAsync(user);
+            mailrequest.Body = GenerateEmailBody(user.DisplayName,await OtpText);
             await this._emailService.SendEmail(mailrequest);
 
 

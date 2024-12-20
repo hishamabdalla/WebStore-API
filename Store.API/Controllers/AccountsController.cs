@@ -28,32 +28,58 @@ namespace Store.API.Controllers
             _tokenService = tokenService;
             _mapper = mapper;
         }
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
-        {
-            var user = await _userService.LoginAsync(loginDto);
-            if(user == null)
-            {
-            
-                return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
-            }
-            return Ok(user);
-        }
+     
 
         [HttpPost("register")]
         public async Task<IActionResult> RegisterAsync(RegisterDto registerDto)
         {
-            var user = await _userService.RegisterAsync(registerDto);
+            var OTP = await _userService.RegisterAsync(registerDto);
 
-            if (user == null)
+            if (OTP == null)
             {
-                //error
+               
                 return BadRequest();
             }
 
-            return Ok(user);
+            return Ok(new
+            {
+                message= $"Please confirm email with the code that you have recieved : {OTP} !!!"
+            });
         }
 
+        [HttpPost("EmailVerification")]
+        public async Task<IActionResult> EmailVerification(string email, string code)
+        {
+            if (email == null || code == null)
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
+
+            var isVerified = await _userManager.ConfirmEmailAsync(user, code);
+
+            if (!isVerified.Succeeded)
+                return BadRequest(error: new ApiErrorResponse(StatusCodes.Status400BadRequest));
+
+            return Ok(new
+            {
+                message="Email Confirmed"
+            });
+        }
+
+        [HttpPost("login")]
+        public async Task<IActionResult> LoginAsync(LoginDto loginDto)
+        {
+            var user = await _userService.LoginAsync(loginDto);
+            if (user == null)
+            {
+
+                return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
+            }
+            return Ok(user);
+        }
         [Authorize]
         [HttpGet("GetCurrentUser")]
         public async Task<IActionResult> GetCurrentUser()
@@ -86,14 +112,7 @@ namespace Store.API.Controllers
             return Ok(_mapper.Map<AddressDto>(user.Address));
         }
 
-        [HttpPost("SendOTP")]
-        public async Task<IActionResult> SentOtp(string Email)
-        {
-          await _userService.SendOtpMail(Email);
-            return Ok();
-            
-        }
-
+       
 
 
     }
