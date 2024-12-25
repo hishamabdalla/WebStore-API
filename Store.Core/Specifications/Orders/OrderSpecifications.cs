@@ -9,6 +9,13 @@ namespace Store.Core.Specifications.Orders
 {
     public class OrderSpecifications:BaseSpecifications<Order,int>
     {
+
+        public OrderSpecifications()
+        {
+            
+
+        }
+
         public OrderSpecifications(string buyerEmail,int orderId)
             :base(o=>o.BuyerEmail==buyerEmail && o.Id==orderId)
         {

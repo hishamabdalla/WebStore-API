@@ -86,6 +86,9 @@ namespace Store.API.Helper
         {
            
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IBrandService, BrandService>();
+            services.AddScoped<ITypeService, TypeService>();
+
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();

@@ -27,6 +27,12 @@ namespace Store.API.Controllers
             return Ok(basket);
         }
 
+        [HttpPost("Webhook")]
+        [Authorize]
+       public async Task<IActionResult> ConfirmPaymentIntent()
+        {
+            return Ok();
+        }
 
 
     }

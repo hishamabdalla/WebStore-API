@@ -37,7 +37,7 @@ namespace Store.API.Controllers
             return Ok(orderToReturn);
         }
 
-        [HttpGet]
+        [HttpGet("GetOrdersForSpecificUser")]
         [Authorize]
         public async Task<IActionResult> GetOrdersForSpecificUser()
         {
@@ -50,9 +50,9 @@ namespace Store.API.Controllers
             return Ok(mapper.Map<IEnumerable<OrderToReturnDto>>(orders));
         }
 
-        [HttpGet("{orderId}")]
+        [HttpGet("GetOrderForSpecificUser/{orderId}")]
         [Authorize]
-        public async Task<IActionResult> GetOrdersForSpecificUser(int orderId)
+        public async Task<IActionResult> GetOrderForSpecificUser(int orderId)
         {
             var userEmail = User.FindFirstValue(ClaimTypes.Email);
             if (userEmail == null) return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
@@ -72,5 +72,32 @@ namespace Store.API.Controllers
 
             return Ok(deliveryMethods);
         }
+
+        [HttpDelete("{orderId}")]
+        [Authorize(Roles ="Admin")]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+            if (userEmail == null) return Unauthorized(new ApiErrorResponse(StatusCodes.Status401Unauthorized));
+
+            var success = await orderService.CancelOrderAsync(userEmail, orderId);
+
+            if (!success) return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
+
+            return Ok(new { message = "Order cancelled successfully." });
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin")] // Restrict access to users with Admin role
+        public async Task<IActionResult> GetAllOrders()
+        {
+            var orders = await orderService.GetAllOrdersAsync(); // This service method would return all orders
+
+            if (orders == null || !orders.Any()) return NotFound(new ApiErrorResponse(StatusCodes.Status404NotFound));
+
+            return Ok(mapper.Map<IEnumerable<OrderToReturnDto>>(orders));
+        }
+
+
     }
 }

@@ -16,6 +16,10 @@ namespace Store.Core.Entities.Order
         PaymentReceived,
 
         [EnumMember(Value = "Payment Failed")]
-        PaymentFailed
+        PaymentFailed,
+
+        [EnumMember(Value = "Cancelled")]
+        Cancelled
+
     }
 }

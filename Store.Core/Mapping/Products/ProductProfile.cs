@@ -23,8 +23,11 @@ namespace Store.Core.Mapping.Products
                 //----> Second Way
                 .ForMember(d => d.PictureUrl, option => option.MapFrom(new PictureUrlResolver(configuration)));
 
-            CreateMap<ProductType,TypeBrandDto>();
-            CreateMap<ProductBrand,TypeBrandDto>();
+            CreateMap<ProductType,TypeBrandDto>().ReverseMap();
+            CreateMap<ProductBrand,TypeBrandDto>().ReverseMap();
+            CreateMap<ProductBrand,GetTypeBrandDto>().ReverseMap();
+            CreateMap<ProductType, GetTypeBrandDto>();
+
             CreateMap<CreateOrUpdateProductDto, Product>().ReverseMap();
         }
     }

@@ -24,7 +24,6 @@ namespace Store.API.Controllers
         [ProducesResponseType(typeof(PaginationResponse<ProductDto>),StatusCodes.Status200OK)]
         [HttpGet] // Get : BaseUrl/api/Products
         [Cached(100)]
-        //[Authorize]
         public async Task<ActionResult<PaginationResponse<ProductDto>>> GetAllProducts([FromQuery] ProductSpecParams productSpec )
         {
             var result= await _productService.GetAllProductsAsync(productSpec);
@@ -53,23 +52,7 @@ namespace Store.API.Controllers
 
 
 
-        [ProducesResponseType(typeof(IEnumerable<TypeBrandDto>), StatusCodes.Status200OK)]
-
-        [HttpGet("brands")] // Get : BaseUrl/api/Products/brands
-        public async Task<ActionResult<IEnumerable<TypeBrandDto>>> GetAllBrands()
-        {
-            var result = await _productService.GetAllBrandsAsync();
-            return Ok(result);
-        }
-        [ProducesResponseType(typeof(IEnumerable<TypeBrandDto>), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(IEnumerable<TypeBrandDto>), StatusCodes.Status200OK)]
-
-        [HttpGet("types")] // Get : BaseUrl/api/Products/types
-        public async Task<ActionResult<IEnumerable<TypeBrandDto>>> GetAllTypes()
-        {
-            var result = await _productService.GetAllTypesAsync();
-            return Ok(result);
-        }
+       
         [ProducesResponseType(typeof(ProductDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status400BadRequest)]
@@ -119,6 +102,7 @@ namespace Store.API.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(ApiErrorResponse), StatusCodes.Status404NotFound)]
         [HttpDelete("{id}")] // DELETE: BaseUrl/api/Products/{id}
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteProductAsync(int id)
         {
             try

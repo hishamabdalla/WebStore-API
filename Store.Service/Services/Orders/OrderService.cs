@@ -1,9 +1,13 @@
-﻿using Store.Core;
+﻿using AutoMapper;
+using Store.Core;
+using Store.Core.Dtos.Orders;
 using Store.Core.Entities;
 using Store.Core.Entities.Order;
+using Store.Core.Helper;
 using Store.Core.Repositories.Interfaces;
 using Store.Core.Services.Contract;
 using Store.Core.Specifications.Orders;
+using Store.Core.Specifications.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,15 +21,26 @@ namespace Store.Service.Services.Orders
         private readonly IUnitOfWork unitOfWork;
         private readonly IBasketRepository basketRepository;
         private readonly IPaymentService paymentService;
+        private readonly IMapper mapper;
 
-        public OrderService(IUnitOfWork unitOfWork,IBasketRepository basketRepository,IPaymentService paymentService) 
+        public OrderService(IUnitOfWork unitOfWork, IBasketRepository basketRepository, IPaymentService paymentService, IMapper mapper)
         {
             this.unitOfWork = unitOfWork;
             this.basketRepository = basketRepository;
             this.paymentService = paymentService;
+            this.mapper = mapper;
         }
 
-      
+        public async Task<bool> CancelOrderAsync(string buyerEmail, int orderId)
+        {
+            var order = await GetOrderByIdForSpecificUser(buyerEmail, orderId);
+            if (order == null || order.Status == OrderStatus.Cancelled) return false;
+
+            order.Status = OrderStatus.Cancelled;
+            unitOfWork.Repository<Order, int>().Update(order);
+
+            return await unitOfWork.CompleteAsync() > 0;
+        }
 
         public async Task<Order?> CreateOrderAsync(string buyerEmail, string basketId, int deliveryMethodId, Address shippingAddress)
         {
@@ -51,6 +66,7 @@ namespace Store.Service.Services.Orders
            var deliveryMethod = await unitOfWork.Repository<DeliveryMethod, int>().GetAsync(deliveryMethodId);
 
             var subTotal=orderItems.Sum(i=>i.Price*i.Quantity);
+            var Total=subTotal+deliveryMethod.Cost;
             if (!string.IsNullOrEmpty(basket.PaymentIntentId))
             {
                 var spec = new OrderSpecificationWithPaymentIntentId(basket.PaymentIntentId);
@@ -66,6 +82,14 @@ namespace Store.Service.Services.Orders
 
             if(result<=0) return null;
             return order;
+        }
+
+        public async Task<IEnumerable<OrderToReturnDto>> GetAllOrdersAsync()
+        {
+            var spec = new OrderSpecifications();
+            var orders = await unitOfWork.Repository<Order, int>().GetAllWithSpecAsync(spec);
+            return  mapper.Map<IEnumerable<OrderToReturnDto>>(orders);
+            
         }
 
         public async Task<Order?> GetOrderByIdForSpecificUser(string buyerEmail, int orderId)
@@ -85,5 +109,6 @@ namespace Store.Service.Services.Orders
             if (orders == null) return null;
             return orders;
         }
+
     }
 }

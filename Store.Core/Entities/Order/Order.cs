@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,7 @@ namespace Store.Core.Entities.Order
             Items = items;
             SubTotal = subTotal;
             PaymentInternId = paymentInternId;
+            Total= SubTotal + DeliveryMethod.Cost;
         }
 
         public string BuyerEmail {  get; set; }
@@ -32,8 +34,8 @@ namespace Store.Core.Entities.Order
 
         public ICollection<OrderItem> Items { get; set; }
         public decimal SubTotal {  get; set; }
-
-        public decimal GetTotal()=>SubTotal+DeliveryMethod.Cost;
+        [NotMapped]
+        public decimal Total {  get; set; }
 
         public string PaymentInternId {  get; set; }
 
