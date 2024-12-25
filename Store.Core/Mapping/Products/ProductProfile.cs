@@ -25,7 +25,7 @@ namespace Store.Core.Mapping.Products
 
             CreateMap<ProductType,TypeBrandDto>();
             CreateMap<ProductBrand,TypeBrandDto>();
-
+            CreateMap<CreateOrUpdateProductDto, Product>().ReverseMap();
         }
     }
 }

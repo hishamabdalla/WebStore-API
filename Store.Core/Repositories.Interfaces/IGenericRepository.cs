@@ -53,7 +53,7 @@ namespace Store.Core.Repositories.Interfaces
         /// Adds a new entity asynchronously.
         /// </summary>
         /// <param name="entity">The entity to add.</param>
-        Task AddAsync(TEntity entity);
+        Task<TEntity> AddAsync(TEntity entity);
 
         Task<int> GetCountAsync(ISpecifications<TEntity,TKey> spec);
 

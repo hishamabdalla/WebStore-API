@@ -37,9 +37,10 @@ namespace Store.Repository.Repositories
             return await _context.Set<TEntity>().FindAsync(id);
         }
 
-        public async Task AddAsync(TEntity entity)
+        public async Task<TEntity> AddAsync(TEntity entity)
         {
             await _context.AddAsync(entity);
+            return entity;
 
         }
 

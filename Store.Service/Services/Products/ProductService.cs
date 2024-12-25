@@ -56,8 +56,47 @@ namespace Store.Service.Services.Products
 
         public async Task<IEnumerable<TypeBrandDto>> GetAllTypesAsync()=>
                     _mapper.Map<IEnumerable<TypeBrandDto>> (await _unitOfWork.Repository<ProductType, int>().GetAllAsync());
-        
 
-        
+        public async Task<ProductDto> CreateProductAsync(CreateOrUpdateProductDto productDto)
+        {
+            var product=await _unitOfWork.Repository<Product, int>().AddAsync(_mapper.Map<Product>(productDto));
+            await _unitOfWork.CompleteAsync();
+            var mappedProduct = _mapper.Map<ProductDto>(product);
+            return mappedProduct;
+        }
+
+        public async Task<ProductDto> UpdateProductAsync(int id, CreateOrUpdateProductDto productDto)
+        {
+            var spec = new ProductSpecifications(id);
+
+            var product = await _unitOfWork.Repository<Product, int>().GetWithSpecAsync(spec);
+
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"The product with ID {id} does not exist.");
+            }
+
+            _mapper.Map(productDto, product); // Map updated properties from DTO to the entity.
+
+            _unitOfWork.Repository<Product, int>().Update(product);
+            await _unitOfWork.CompleteAsync();
+
+            var updatedProduct = _mapper.Map<ProductDto>(product);
+            return updatedProduct;
+        }
+        public async Task DeleteProductAsync(int id)
+        {
+            var product = await _unitOfWork.Repository<Product, int>().GetAsync(id);
+
+            if (product == null)
+            {
+                throw new KeyNotFoundException($"The product with ID {id} does not exist.");
+            }
+
+            _unitOfWork.Repository<Product, int>().Delete(product);
+            await _unitOfWork.CompleteAsync();
+        }
+
+
     }
 }
