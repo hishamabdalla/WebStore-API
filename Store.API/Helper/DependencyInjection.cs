@@ -27,6 +27,7 @@ using Store.Service.Services.Payments;
 using Role = Store.Core.Entities.Identity.Role;
 using Store.Service.Email;
 using Store.Core.Entities.Email;
+using Microsoft.OpenApi.Models;
 namespace Store.API.Helper
 {
     public static class DependencyInjection
@@ -58,7 +59,36 @@ namespace Store.API.Helper
         {
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
              services.AddEndpointsApiExplorer();
-             services.AddSwaggerGen();
+            services.AddSwaggerGen(options =>
+            {
+               
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
+            });
 
             return services;
         }
@@ -66,12 +96,12 @@ namespace Store.API.Helper
         {
             services.AddDbContext<StoreDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionRemote"));
             });
             
             services.AddDbContext<StoreIdentityDbContext>(options =>
             {
-                options.UseSqlServer(configuration.GetConnectionString("IdentityConnection"));
+                options.UseSqlServer(configuration.GetConnectionString("IdentityConnectionRemote"));
             });
 
             return services;

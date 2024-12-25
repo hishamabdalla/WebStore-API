@@ -4,10 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.Routing;
-using Microsoft.AspNetCore.Routing;
 using Store.Core;
 using Store.Core.Dtos.Auth;
 using Store.Core.Entities.Email;
@@ -31,7 +27,6 @@ namespace Store.Service.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IdentityDbContext _identityDbContext;
         private readonly IEmailService _emailService;
-        private readonly IUrlHelperFactory _urlHelperFactory;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
 
@@ -49,7 +44,6 @@ namespace Store.Service.Users
             ITokenService tokenService,
             IMapper mapper,
             IEmailService emailService,
-            IUrlHelperFactory urlHelperFactory,
             IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
@@ -57,7 +51,6 @@ namespace Store.Service.Users
             _tokenService = tokenService;
             _mapper = mapper;
             _emailService = emailService;
-            _urlHelperFactory = urlHelperFactory;
             _httpContextAccessor = httpContextAccessor;
         }
 
