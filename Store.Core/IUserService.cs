@@ -13,6 +13,11 @@ namespace Store.Core
        Task<string> RegisterAsync(RegisterDto registerDto);
        Task<bool> CheckEmailExits(string email);
 
+        Task<bool> ForgetPasswordAsync(ForgetPasswordDto request);
+        Task<bool> ResetPasswordAsync(ResetPasswordDto request);
+
+
+
 
     }
 }

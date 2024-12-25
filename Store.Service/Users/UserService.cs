@@ -1,7 +1,13 @@
 ﻿using AutoMapper;
 using AutoMapper.Internal;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Abstractions;
+using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.AspNetCore.Routing;
 using Store.Core;
 using Store.Core.Dtos.Auth;
 using Store.Core.Entities.Email;
@@ -25,6 +31,10 @@ namespace Store.Service.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IdentityDbContext _identityDbContext;
         private readonly IEmailService _emailService;
+        private readonly IUrlHelperFactory _urlHelperFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+
 
 
         /// <summary>
@@ -38,13 +48,17 @@ namespace Store.Service.Users
             SignInManager<AppUser> signInManager,
             ITokenService tokenService,
             IMapper mapper,
-            IEmailService emailService)
+            IEmailService emailService,
+            IUrlHelperFactory urlHelperFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _tokenService = tokenService;
             _mapper = mapper;
             _emailService = emailService;
+            _urlHelperFactory = urlHelperFactory;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
@@ -152,6 +166,51 @@ namespace Store.Service.Users
 
 
         }
+
+        public async Task<bool> ForgetPasswordAsync(ForgetPasswordDto request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            // Prepare a plain text or message-based body instead of a clickable link
+            var mailRequest = new MailRequest
+            {
+                MailTo = user.Email,
+                Subject = "Reset Password",
+                Body = $"Hello {user.DisplayName},<br><br>" +
+                       $"We received a request to reset your password. Please use the following token to reset your password: <strong>{token}</strong>.<br><br>" +
+                       "If you did not request this, please ignore this email or contact support."
+            };
+
+            // Send the email
+            await _emailService.SendEmail(mailRequest);
+
+            return true;
+        }
+
+        public async Task<bool> ResetPasswordAsync(ResetPasswordDto request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var result = await _userManager.ResetPasswordAsync(user, request.Token, request.Password);
+
+            return result.Succeeded;
+        }
+
         private string GenerateEmailBody(string name, string otptext)
         {
             string emailbody = "";
@@ -177,6 +236,8 @@ namespace Store.Service.Users
 
             return emailbody;
         }
+
+
 
 
     }

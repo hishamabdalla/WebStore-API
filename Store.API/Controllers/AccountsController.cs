@@ -80,6 +80,30 @@ namespace Store.API.Controllers
             }
             return Ok(user);
         }
+
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordDto request)
+        {
+            
+            var user = await _userService.ForgetPasswordAsync(request);
+
+            return Ok(new { Message = "Password reset link has been sent to your email." });
+        }
+
+        [HttpPost("ResetPassword")]
+        public async Task<IActionResult> ResetPassword(ResetPasswordDto request)
+        {
+            var user = await _userService.ResetPasswordAsync(request);
+            if (user == null)
+                {
+                return BadRequest(new ApiErrorResponse(StatusCodes.Status400BadRequest));
+            }
+
+            return Ok(new { Message = "Password has been reset successfully." });
+        }
+
+
+
         [Authorize]
         [HttpGet("GetCurrentUser")]
         public async Task<IActionResult> GetCurrentUser()

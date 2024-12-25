@@ -94,6 +94,8 @@ namespace Store.API.Helper
             services.AddScoped<IOrderService, OrderService >();
             services.AddScoped<IPaymentService, PaymentService >();
             services.AddScoped<IEmailService, EmailService >();
+            services.AddHttpContextAccessor();
+
             return services;
         }
         private static IServiceCollection AddAutoMapperService(this IServiceCollection services, IConfiguration configuration)
