@@ -23,7 +23,7 @@ namespace Store.API.Controllers
 
         [ProducesResponseType(typeof(PaginationResponse<ProductDto>),StatusCodes.Status200OK)]
         [HttpGet] // Get : BaseUrl/api/Products
-        [Cached(100)]
+        [Cached(1)]
         public async Task<ActionResult<PaginationResponse<ProductDto>>> GetAllProducts([FromQuery] ProductSpecParams productSpec )
         {
             var result= await _productService.GetAllProductsAsync(productSpec);

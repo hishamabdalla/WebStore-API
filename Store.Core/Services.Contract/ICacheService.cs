@@ -9,7 +9,7 @@ namespace Store.Core.Services.Contract
     public interface ICacheService
     {
         Task SetCacheKeyAsync(string cacheKey,object response,TimeSpan expireTime);
-
         Task<string> GetCacheKeyAsync(string cacheKey);
     }
 }
+ 

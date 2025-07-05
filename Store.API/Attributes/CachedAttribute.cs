@@ -38,7 +38,7 @@ namespace Store.API.Attributes
              var executedContext= await next();
             if (executedContext.Result is OkObjectResult response)
             {
-                await cacheService.SetCacheKeyAsync(cacheKey,response.Value,TimeSpan.FromSeconds(expireTime));
+                await cacheService.SetCacheKeyAsync(cacheKey,response.Value,TimeSpan.FromDays(expireTime));
             }
         }
 
