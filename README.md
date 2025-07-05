@@ -122,7 +122,8 @@ Payments are processed securely via the **Stripe API**, allowing users to make p
 
 ## Deployment
 
-This API is designed for easy deployment on cloud platforms and includes all necessary configurations for production environments. It is hosted on **MonsterAPI** for high availability and scalability.
+This API is hosted on **MonsterAPI**. You can access the live deployment here:
 
+[Live Deployment Link](https://webstorev.runasp.net/swagger/index.html)
 ---
 
