@@ -205,9 +205,8 @@ namespace Store.API.Helper
         {
             services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
             {
-              
 
-                var connection = configuration.GetConnectionString("Redis");
+                var connection = configuration.GetConnectionString("cache");
                 return ConnectionMultiplexer.Connect(connection);
             });
             return services;
