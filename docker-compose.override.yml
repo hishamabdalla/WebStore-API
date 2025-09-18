@@ -30,7 +30,7 @@ services:
           path: ./Store.Repository
           target: /src/Store.Repository
 
-  store.cache:
+  redis:
     # Override for development - expose Redis CLI for debugging
     ports:
       - "6379:6379"

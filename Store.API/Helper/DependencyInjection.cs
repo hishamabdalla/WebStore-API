@@ -208,7 +208,7 @@ namespace Store.API.Helper
                
                 try
                 {
-                    var connection = configuration.GetConnectionString("cache");
+                    var connection = configuration.GetConnectionString("Redis");
                     var redis = ConnectionMultiplexer.Connect(connection);
                     // Test the connection
                     return redis;

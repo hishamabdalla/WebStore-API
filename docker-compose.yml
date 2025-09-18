@@ -1,6 +1,6 @@
 services:
   store.api:
-    image: ghcr.io/hishamabdalla/webstore-api:master
+    image: ${DOCKER_REGISTRY-}storeapi
     build:
       context: .
       dockerfile: Store.API/Dockerfile
@@ -12,13 +12,13 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     depends_on:
-      store.cache:
+      redis:
         condition: service_healthy
     networks:
       - store-network
     restart: unless-stopped
 
-  store.cache:
+  redis:
     image: redis:latest
     restart: always
     ports:
