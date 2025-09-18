@@ -8,15 +8,13 @@ services:
       - "8080:8080"
       - "8081:8081"
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_HTTP_PORTS=8080
       - ASPNETCORE_HTTPS_PORTS=8081
     depends_on:
-      store.cache:
-        condition: service_healthy
+      - store.cache
     networks:
       - store-network
-    restart: unless-stopped
 
   store.cache:
     image: redis:latest
@@ -27,17 +25,10 @@ services:
       - redis-data:/data
     networks:
       - store-network
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-    command: redis-server --appendonly yes --requirepass ""
+    command: redis-server --appendonly yes
 
 volumes:
   redis-data:
-    driver: local
 
 networks:
   store-network:

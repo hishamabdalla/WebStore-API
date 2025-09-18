@@ -46,7 +46,12 @@ namespace Store.API.Helper
             //}
             app.UseSwagger();
             app.UseSwaggerUI();
-            app.UseStatusCodePagesWithReExecute("/error/{0}");
+            app.MapGet("/", context =>
+            {
+                context.Response.Redirect("/swagger/index.html");
+                return Task.CompletedTask;
+            });
+            app.UseStatusCodePagesWithReExecute("/error/{0}"); // 
             app.UseStaticFiles();
             app.UseHttpsRedirection();
             app.UseAuthentication();

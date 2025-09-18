@@ -205,9 +205,22 @@ namespace Store.API.Helper
         {
             services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
             {
-
-                var connection = configuration.GetConnectionString("cache");
-                return ConnectionMultiplexer.Connect(connection);
+                try
+                {
+                    var connection = configuration.GetConnectionString("cache");
+                    var redis = ConnectionMultiplexer.Connect(connection);
+                    // Test the connection
+                    return redis;
+                }
+                catch (Exception ex)
+                {
+                    // Log the error and return null or a fallback implementation
+                    var logger = serviceProvider.GetService<ILogger<Program>>();
+                    logger?.LogError(ex, "Failed to connect to Redis. Redis features will be disabled.");
+                    
+                    // Return a null connection - services should handle this gracefully
+                    return null;
+                }
             });
             return services;
         }
