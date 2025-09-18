@@ -48,6 +48,8 @@ namespace Store.Service.Services.Caches
             {
                 var cacheResponse = await _database.StringGetAsync(cacheKey);
                 if (cacheResponse.IsNullOrEmpty) return null;
+
+                _logger.LogInformation("Data retrieved from cache for key: {CacheKey} successfully", cacheKey);
                 return cacheResponse.ToString();
             }
             catch (Exception ex)
@@ -71,6 +73,8 @@ namespace Store.Service.Services.Caches
             {
                 var option = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
                 await _database.StringSetAsync(cacheKey, JsonSerializer.Serialize(response, option), expireTime);
+
+                _logger.LogInformation("Cache set for key: {CacheKey} Successfully", cacheKey);
             }
             catch (Exception ex)
             {

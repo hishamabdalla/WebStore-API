@@ -205,6 +205,7 @@ namespace Store.API.Helper
         {
             services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
             {
+               
                 try
                 {
                     var connection = configuration.GetConnectionString("cache");
