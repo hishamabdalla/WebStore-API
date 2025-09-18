@@ -1,6 +1,6 @@
 services:
   store.api:
-    image: ${DOCKER_REGISTRY-}storeapi
+    image: ghcr.io/hishamabdalla/webstore-api:master
     build:
       context: .
       dockerfile: Store.API/Dockerfile
