@@ -1,129 +1,139 @@
-# Webstore API
+# 🛍️ Webstore API
 
-Webstore API is a fully-featured e-commerce backend solution built with **ASP.NET Core**. It provides secure authentication, product management, order processing, payment integration, and a comprehensive set of features necessary for an e-commerce platform. The system supports advanced functionalities such as email verification, password reset, and role-based access (Admin & Customer).
+**Webstore API** is a fully-featured e-commerce backend built with **ASP.NET Core**.  
+It provides secure authentication, product & order management, payment integration, and all the essential features required for a modern online store.  
 
-## Features
-
-- **Secure Authentication**: JWT-based authentication and role management (Admin & Customer).
-- **Product Management**: Full CRUD functionality for managing products, categories, and brands.
-- **Shopping Basket**: Manage the user’s shopping cart, add/remove products.
-- **Order Management**: Place, view, and manage orders with delivery methods.
-- **Payment Integration**: Secure payment processing via **Stripe**.
-- **Email Verification**: OTP-based email verification for user security.
-- **Password Reset**: Forget and reset password functionality with OTP.
-- **Search, Sorting, Pagination, & Filtering**: Efficient product discovery.
-- **Caching with Redis**: Optimized performance with Redis for frequently accessed data.
-- **Role-based Authorization**: Separate roles for Admin and Customer to manage access.
-
-## Technologies Used
-
-- **ASP.NET Core**: Framework for building the API.
-- **JWT Authentication**: For secure user authentication.
-- **Stripe**: Payment gateway integration.
-- **Redis**: Caching mechanism for enhanced performance.
-- **Entity Framework Core**: ORM for database management.
-- **Onion Architecture**: Structured design with separation of concerns.
-- **Unit of Work & Generic Repository Patterns**: Clean and scalable data access.
-- **Specification Pattern**: For building dynamic queries.
-
-## API Endpoints
-
-### Accounts
-
-- **POST /api/Accounts/register**: Register a new user.
-- **POST /api/Accounts/EmailVerification**: Verify email with OTP.
-- **POST /api/Accounts/login**: User login, returns a JWT token.
-- **POST /api/Accounts/ForgetPassword**: Request password reset link.
-- **POST /api/Accounts/ResetPassword**: Reset password with OTP.
-- **GET /api/Accounts/GetCurrentUser**: Get details of the currently logged-in user.
-- **GET /api/Accounts/Address**: Fetch user’s saved addresses.
-
-### Basket
-
-- **GET /api/Basket**: Get the user’s basket details.
-- **POST /api/Basket**: Add a product to the basket.
-- **DELETE /api/Basket**: Remove a product from the basket.
-
-### Brands
-
-- **GET /api/Brands**: Get a list of all brands.
-- **POST /api/Brands**: Add a new brand.
-- **GET /api/Brands/{id}**: Get a specific brand by ID.
-- **PUT /api/Brands/{id}**: Update an existing brand.
-- **DELETE /api/Brands/{id}**: Delete a brand.
-
-### Orders
-
-- **POST /api/Orders**: Place a new order.
-- **GET /api/Orders/GetOrdersForSpecificUser**: Get all orders for the current user.
-- **GET /api/Orders/GetOrderForSpecificUser/{orderId}**: Get details of a specific order.
-- **GET /api/Orders/GetDeliveryMethods**: Get available delivery methods.
-- **DELETE /api/Orders/{orderId}**: Cancel an order.
-- **GET /api/Orders/all**: Get all orders (Admin only).
-
-### Payment
-
-- **POST /api/Payment/{basketId}**: Process payment for the basket items.
-- **POST /api/Payment/Webhook**: Webhook to handle payment updates from Stripe.
-
-### Products
-
-- **GET /api/Products**: Get a list of all products.
-- **POST /api/Products**: Add a new product.
-- **GET /api/Products/{id}**: Get a product by ID.
-- **PUT /api/Products/{id}**: Update an existing product.
-- **DELETE /api/Products/{id}**: Delete a product.
-
-### Types
-
-- **GET /api/Types**: Get a list of all product types.
-- **POST /api/Types**: Add a new product type.
-- **GET /api/Types/{id}**: Get a product type by ID.
-- **PUT /api/Types/{id}**: Update an existing product type.
-- **DELETE /api/Types/{id}**: Delete a product type.
+It also supports advanced functionalities like email verification, password reset, caching, and role-based access control.
 
 ---
 
-## Architecture
+## 🚀 Features
 
-The Webstore API is built using **Onion Architecture**, which emphasizes separation of concerns and ensures clean, maintainable code. The core layers include:
-
-- **Core Layer**: Contains business logic and domain models.
-- **Application Layer**: Implements service interfaces and application logic.
-- **Infrastructure Layer**: Deals with external dependencies (e.g., database access, Stripe integration).
-- **API Layer**: The entry point for all client interactions through HTTP requests.
-
-### Design Patterns
-
-- **Unit of Work**: Manages transaction boundaries and ensures data consistency.
-- **Generic Repository**: Provides a standard interface for data access and minimizes redundant code.
-- **Specification Pattern**: Allows dynamic query creation for complex searches and filters.
-- **AutoMapper**: Simplifies object-to-object mapping, especially for data transfer objects (DTOs).
+- 🔐 **Secure Authentication** – JWT-based auth with role management (Admin & Customer)  
+- 🛒 **Product & Category Management** – Full CRUD for products, categories, and brands  
+- 🧺 **Shopping Basket** – Add/remove items and manage user cart  
+- 📦 **Order Management** – Place, view, and manage orders with delivery methods  
+- 💳 **Payment Integration** – Secure online payments with **Stripe**  
+- 📧 **Email Verification & OTP** – Enhanced user account security  
+- 🔑 **Password Reset** – Forget/reset password with OTP verification  
+- 🔍 **Search, Sorting, Filtering, Pagination** – Improved product discovery  
+- ⚡ **Caching with Redis** – Faster performance for frequently accessed data  
+- 🔐 **Role-based Authorization** – Separate roles for Admin and Customer  
 
 ---
 
-## Caching
+## 🛠️ Technologies Used
 
-Redis is used for caching commonly accessed data like products, improving response times and reducing database load. This is especially useful for high-traffic e-commerce platforms.
-
----
-
-## Error Handling
-
-Comprehensive error handling is implemented using global exception handling middleware, providing meaningful error messages and ensuring a smooth user experience.
-
----
-
-## Stripe Integration
-
-Payments are processed securely via the **Stripe API**, allowing users to make purchases using credit/debit cards. Webhooks are set up to handle payment updates and status changes.
+- **ASP.NET Core** – API framework  
+- **JWT** – Authentication & authorization  
+- **Stripe** – Payment processing  
+- **Redis** – Caching layer  
+- **Entity Framework Core** – ORM for database  
+- **Onion Architecture** – Clean project structure  
+- **Unit of Work & Generic Repository** – Data access patterns  
+- **Specification Pattern** – Dynamic query building  
 
 ---
 
-## Deployment
+## 📡 API Endpoints
 
-This API is hosted on **MonsterAPI**. You can access the live deployment here:
+### 🔑 Accounts  
+- `POST /api/Accounts/register` – Register a new user  
+- `POST /api/Accounts/EmailVerification` – Verify email with OTP  
+- `POST /api/Accounts/login` – User login (returns JWT)  
+- `POST /api/Accounts/ForgetPassword` – Request password reset  
+- `POST /api/Accounts/ResetPassword` – Reset password with OTP  
+- `GET /api/Accounts/GetCurrentUser` – Get current user info  
+- `GET /api/Accounts/Address` – Get user addresses  
 
-[Live Deployment Link](https://webstorev.runasp.net/swagger/index.html)
+### 🧺 Basket  
+- `GET /api/Basket` – Get basket details  
+- `POST /api/Basket` – Add product to basket  
+- `DELETE /api/Basket` – Remove product from basket  
+
+### 🏷️ Brands  
+- `GET /api/Brands` – Get all brands  
+- `POST /api/Brands` – Add a new brand  
+- `GET /api/Brands/{id}` – Get brand by ID  
+- `PUT /api/Brands/{id}` – Update brand  
+- `DELETE /api/Brands/{id}` – Delete brand  
+
+### 📦 Orders  
+- `POST /api/Orders` – Place new order  
+- `GET /api/Orders/GetOrdersForSpecificUser` – Get all orders for current user  
+- `GET /api/Orders/GetOrderForSpecificUser/{orderId}` – Get order details  
+- `GET /api/Orders/GetDeliveryMethods` – Get delivery methods  
+- `DELETE /api/Orders/{orderId}` – Cancel order  
+- `GET /api/Orders/all` – Get all orders (Admin only)  
+
+### 💳 Payment  
+- `POST /api/Payment/{basketId}` – Process payment  
+- `POST /api/Payment/Webhook` – Stripe webhook handler  
+
+### 🛍️ Products  
+- `GET /api/Products` – Get all products  
+- `POST /api/Products` – Add new product  
+- `GET /api/Products/{id}` – Get product by ID  
+- `PUT /api/Products/{id}` – Update product  
+- `DELETE /api/Products/{id}` – Delete product  
+
+### 📂 Types  
+- `GET /api/Types` – Get all product types  
+- `POST /api/Types` – Add new type  
+- `GET /api/Types/{id}` – Get type by ID  
+- `PUT /api/Types/{id}` – Update type  
+- `DELETE /api/Types/{id}` – Delete type  
+
 ---
 
+## 🏗️ Architecture
+
+The API follows **Onion Architecture**, ensuring clean separation of concerns and maintainable code.  
+
+- **Core Layer** – Business logic and domain models  
+- **Application Layer** – Services and application logic  
+- **Infrastructure Layer** – Database, payment gateway, caching, etc.  
+- **API Layer** – Entry point for HTTP requests  
+
+### ✨ Design Patterns
+- **Unit of Work** – Manages transactions and ensures consistency  
+- **Generic Repository** – Simplified data access  
+- **Specification Pattern** – Build complex queries dynamically  
+- **AutoMapper** – Map domain models to DTOs easily  
+
+---
+
+## ⚡ Caching
+
+**Redis** is integrated to cache frequently requested data (e.g., product lists) —  
+this improves response times and reduces database load, which is critical for high-traffic e-commerce platforms.
+
+---
+
+## 🛡️ Error Handling
+
+A global exception handling middleware provides meaningful error messages and consistent responses across the API.
+
+---
+
+## 💳 Stripe Integration
+
+Secure payment processing is handled through **Stripe API** with webhook support to track payment events and status updates.
+
+---
+
+## 🐳 Docker Support
+
+The entire application is **containerized using Docker**:  
+- Built with a **multi-stage Dockerfile** for optimized image size.  
+- Easily deployable across development, staging, and production environments.  
+- Integrated with **GitHub Actions** for automated build and deployment pipelines.  
+
+---
+
+## ☁️ Deployment
+
+The API is deployed and hosted on **MonsterAPI**.  
+You can try the live version here:  
+
+👉 [**Live Swagger UI**](https://webstorev.runasp.net/swagger/index.html)  
