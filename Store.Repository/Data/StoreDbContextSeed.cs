@@ -1,4 +1,6 @@
-﻿using Store.Core.Entities;
+﻿using Microsoft.AspNetCore.Identity;
+using Store.Core.Entities;
+using Store.Core.Entities.Identity;
 using Store.Core.Entities.Order;
 using Store.Repository.Data.Contexts;
 using System;
@@ -7,12 +9,13 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Address = Store.Core.Entities.Identity.Address;
 
 namespace Store.Repository.Data
 {
     public static class StoreDbContextSeed
     {
-        public async static Task SeedAsync(StoreDbContext _context)
+        public async static Task SeedAsync(StoreDbContext _context, UserManager<AppUser> _userManager)
         {
             if (_context.Types.Count() == 0)
             {
@@ -79,6 +82,32 @@ namespace Store.Repository.Data
                     await _context.DeliveryMethods.AddRangeAsync(deliveryMethods);
                     await _context.SaveChangesAsync();
                 }
+
+            }
+
+            if (_userManager.Users.Count() == 0)
+            {
+                var user = new AppUser()
+                {
+                    Email = "Admin@gmail.com",
+                    DisplayName = "Admin",
+                    UserName = "Admin",
+                    PhoneNumber = "0100000000",
+
+                    Address = new Address()
+                    {
+                        FName = "Admin",
+                        LName = "Admin",
+                        City = "Mansoura",
+                        Country = "Egypt",
+                        Street = "123"
+                    }
+                   ,
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(user, "Admin@123");
+                await _userManager.AddToRoleAsync(user, "Admin");
 
             }
         }

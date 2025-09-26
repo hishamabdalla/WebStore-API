@@ -1,5 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Store.Core.Entities;
+using Store.Core.Entities.Identity;
 using Store.Core.Entities.Order;
 using System;
 using System.Collections.Generic;
@@ -10,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Store.Repository.Data.Contexts
 {
-    public class StoreDbContext : DbContext
+    public class StoreDbContext : IdentityDbContext<AppUser, Role, string>
     {
 
         public StoreDbContext(DbContextOptions<StoreDbContext> options):base(options) 
