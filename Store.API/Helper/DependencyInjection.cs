@@ -209,7 +209,7 @@ namespace Store.API.Helper
 
                 try
                 {
-                    var connection = configuration.GetConnectionString("LocalConnection");
+                    var connection = configuration.GetConnectionString("DockerConnection");
 
                     var redis = ConnectionMultiplexer.Connect(connection);
                     // Test the connection
