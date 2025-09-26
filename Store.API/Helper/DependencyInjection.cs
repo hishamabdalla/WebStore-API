@@ -4,7 +4,6 @@ using Store.Repository;
 using Store.Repository.Data.Contexts;
 using Store.Service.Services.Products;
 using Store.Core.Mapping.Products;
-using Store.Repository.Identity.Contexts;
 using Store.Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Store.Core.Services.Contract;
@@ -24,6 +23,7 @@ using Store.Service.Services.Caches;
 using Store.Core.Mapping.Orders;
 using Store.Service.Services.Orders;
 using Store.Service.Services.Payments;
+using Store.Core.Entities.Payments;
 using Role = Store.Core.Entities.Identity.Role;
 using Store.Service.Email;
 using Store.Core.Entities.Email;
@@ -33,9 +33,9 @@ namespace Store.API.Helper
     public static class DependencyInjection
     {
 
-        public static IServiceCollection AddDependency(this IServiceCollection services,IConfiguration configuration)
+        public static IServiceCollection AddDependency(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddBuildInService(); 
+            services.AddBuildInService();
             services.AddSwaggerService();
             services.AddDbContextService(configuration);
             services.AddUserDefindService();
@@ -45,6 +45,7 @@ namespace Store.API.Helper
             services.ConfigureInvalidModelStateResponseService();
             services.AddRedisService(configuration);
             services.AddEmailConfigurationsService(configuration);
+            services.AddStripeConfigurationsService(configuration);
 
             return services;
         }
@@ -58,10 +59,10 @@ namespace Store.API.Helper
         private static IServiceCollection AddSwaggerService(this IServiceCollection services)
         {
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-             services.AddEndpointsApiExplorer();
+            services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(options =>
             {
-               
+
                 options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     Name = "Authorization",
@@ -98,12 +99,6 @@ namespace Store.API.Helper
             {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnectionRemote"));
             });
-            
-            services.AddDbContext<StoreIdentityDbContext>(options =>
-            {
-                options.UseSqlServer(configuration.GetConnectionString("IdentityConnectionRemote"));
-            });
-
             return services;
         }
         private static IServiceCollection AddEmailConfigurationsService(this IServiceCollection services, IConfiguration configuration)
@@ -112,9 +107,15 @@ namespace Store.API.Helper
             return services;
         }
 
+        private static IServiceCollection AddStripeConfigurationsService(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<StripeSettings>(configuration.GetSection("StripeSettings"));
+            return services;
+        }
+
         private static IServiceCollection AddUserDefindService(this IServiceCollection services)
         {
-           
+
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IBrandService, BrandService>();
             services.AddScoped<ITypeService, TypeService>();
@@ -122,11 +123,11 @@ namespace Store.API.Helper
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
-            services.AddScoped<IBasketRepository, BasketRepository >();
-            services.AddScoped<ICacheService, CacheService >();
-            services.AddScoped<IOrderService, OrderService >();
-            services.AddScoped<IPaymentService, PaymentService >();
-            services.AddScoped<IEmailService, EmailService >();
+            services.AddScoped<IBasketRepository, BasketRepository>();
+            services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IOrderService, OrderService>();
+            services.AddScoped<IPaymentService, PaymentService>();
+            services.AddScoped<IEmailService, EmailService>();
             services.AddHttpContextAccessor();
 
             return services;
@@ -158,22 +159,22 @@ namespace Store.API.Helper
                     return new BadRequestObjectResult(response);
                 };
             });
-            return services;    
+            return services;
         }
 
         private static IServiceCollection AddIdentityService(this IServiceCollection services)
         {
-            
-            services.AddIdentity<AppUser,Role>(options =>
+
+            services.AddIdentity<AppUser, Role>(options =>
             {
-                options.SignIn.RequireConfirmedEmail= true;
+                options.SignIn.RequireConfirmedEmail = true;
                 // Configure lockout settings
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration
                 options.Lockout.MaxFailedAccessAttempts = 5; // Maximum failed attempts before lockout
                 options.Lockout.AllowedForNewUsers = true; // Enable lockout for new users
                 options.Tokens.EmailConfirmationTokenProvider = TokenOptions.DefaultEmailProvider;
             })
-.AddEntityFrameworkStores<StoreIdentityDbContext>()
+.AddEntityFrameworkStores<StoreDbContext>()
 .AddDefaultTokenProviders();
             return services;
         }
@@ -201,14 +202,15 @@ namespace Store.API.Helper
             return services;
         }
 
-        private static IServiceCollection AddRedisService(this IServiceCollection services,IConfiguration configuration)
+        private static IServiceCollection AddRedisService(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddSingleton<IConnectionMultiplexer>((serviceProvider) =>
             {
-               
+
                 try
                 {
-                    var connection = configuration.GetConnectionString("Redis");
+                    var connection = configuration.GetConnectionString("LocalConnection");
+
                     var redis = ConnectionMultiplexer.Connect(connection);
                     // Test the connection
                     return redis;
@@ -218,12 +220,12 @@ namespace Store.API.Helper
                     // Log the error and return null or a fallback implementation
                     var logger = serviceProvider.GetService<ILogger<Program>>();
                     logger?.LogError(ex, "Failed to connect to Redis. Redis features will be disabled.");
-                    
+
                     // Return a null connection - services should handle this gracefully
                     return null;
                 }
             });
             return services;
         }
-    } 
+    }
 }

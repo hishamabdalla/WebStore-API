@@ -1,9 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Options;
 using Store.Core;
 using Store.Core.Entities;
 using Store.Core.Entities.Order;
+using Store.Core.Entities.Payments;
 using Store.Core.Repositories.Interfaces;
 using Store.Core.Services.Contract;
+using Store.Core.Specifications.Orders;
 using Stripe;
 using System;
 using System.Collections.Generic;
@@ -17,21 +19,19 @@ namespace Store.Service.Services.Payments
     {
         private readonly IBasketRepository basketRepository;
         private readonly IUnitOfWork unitOfWork;
-        private readonly IConfiguration configuration;
+        private readonly StripeSettings stripeSettings;
 
-        public PaymentService(IBasketRepository basketRepository,IUnitOfWork unitOfWork,IConfiguration configuration)
+        public PaymentService(IBasketRepository basketRepository, IUnitOfWork unitOfWork, IOptions<StripeSettings> stripeSettings)
         {
             this.basketRepository = basketRepository;
             this.unitOfWork = unitOfWork;
-            this.configuration = configuration;
+            this.stripeSettings = stripeSettings.Value;
         }
         public async Task<UserBasket> SetPaymentIntentIdAsync(string basketId)
         {
-            StripeConfiguration.ApiKey = configuration["Stripe:SecretKey"];
+            StripeConfiguration.ApiKey = stripeSettings.SecretKey;
             var basket= await basketRepository.GetBasketAsync(basketId);
             if (basket == null) return null;
-
-
 
             var shippingPrice = 0m;
 
@@ -87,6 +87,25 @@ namespace Store.Service.Services.Payments
           basket= await  basketRepository.SetBasketAsync(basket);
             if (basket is null) return null;
             return basket;
+        }
+
+        public async Task<Order> UpdatePaymentIntentForSucessedOrFailed(string paymentIntentId, bool flag)
+        {
+           var order= await unitOfWork.Repository<Order, int>().GetWithSpecAsync(new OrderSpecificationWithPaymentIntentId(paymentIntentId));
+            if (order == null) return null;
+            if (flag)
+            {
+                order.Status = OrderStatus.PaymentReceived;
+            }
+            else
+            {
+                order.Status = OrderStatus.PaymentFailed;
+            }
+
+            unitOfWork.Repository<Order, int>().Update(order);
+            await unitOfWork.CompleteAsync();
+
+            return order;
         }
     }
 }
